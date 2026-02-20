@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Workforce Analytics - Ministry of Health Nursing Intelligence</title>
+    <link rel="stylesheet" href="STYLE.CSS">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #f5f7fa; }
+        .page-container { min-height: 100vh; }
+        .page-header { background: linear-gradient(135deg, #7c3aed 0%, #a855f7 100%); color: white; padding: 25px 40px; box-shadow: 0 4px 15px rgba(168, 85, 247, 0.3); }
+        .header-top { display: flex; justify-content: space-between; align-items: center; }
+        .header-title h1 { font-size: 1.8rem; margin-bottom: 5px; display: flex; align-items: center; gap: 12px; }
+        .header-title p { opacity: 0.9; font-size: 0.95rem; }
+        .header-actions { display: flex; gap: 12px; }
+        .btn { padding: 10px 20px; border: none; border-radius: 8px; cursor: pointer; display: flex; align-items: center; gap: 8px; font-size: 0.9rem; transition: all 0.3s; }
+        .btn-primary { background: white; color: #7c3aed; }
+        .btn-secondary { background: rgba(255,255,255,0.2); color: white; }
+        .btn:hover { transform: translateY(-2px); }
+        .back-link { display: inline-flex; align-items: center; gap: 8px; color: white; text-decoration: none; padding: 15px 40px; font-size: 0.9rem; background: rgba(0,0,0,0.1); width: 100%; }
+        .back-link:hover { background: rgba(0,0,0,0.2); }
+        .stats-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; padding: 25px 40px; background: white; }
+        .stat-card { padding: 20px; border-radius: 12px; background: #f8f9fa; position: relative; }
+        .stat-card::before { content: ''; position: absolute; top: 0; left: 0; width: 4px; height: 100%; border-radius: 12px 0 0 12px; }
+        .stat-card.purple::before { background: #7c3aed; }
+        .stat-card.blue::before { background: #3b82f6; }
+        .stat-card.teal::before { background: #0d9488; }
+        .stat-card.orange::before { background: #f59e0b; }
+        .stat-icon { width: 45px; height: 45px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 1.3rem; margin-bottom: 12px; }
+        .stat-icon.purple { background: rgba(124,58,237,0.1); color: #7c3aed; }
+        .stat-icon.blue { background: rgba(59,130,246,0.1); color: #3b82f6; }
+        .stat-icon.teal { background: rgba(13,148,136,0.1); color: #0d9488; }
+        .stat-icon.orange { background: rgba(245,158,11,0.1); color: #f59e0b; }
+        .stat-value { font-size: 2rem; font-weight: 700; color: #1a1a2e; }
+        .stat-label { font-size: 0.9rem; color: #666; margin-top: 5px; }
+        .stat-detail { font-size: 0.8rem; color: #999; margin-top: 8px; }
+        .filters-bar { padding: 20px 40px; background: white; border-bottom: 1px solid #eee; display: flex; gap: 20px; flex-wrap: wrap; }
+        .filter-group { display: flex; align-items: center; gap: 10px; }
+        .filter-label { font-weight: 500; color: #333; }
+        .filter-select { padding: 10px 15px; border: 1px solid #ddd; border-radius: 6px; font-size: 0.9rem; min-width: 150px; }
+        .main-content { padding: 30px 40px; }
+        .content-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 25px; }
+        .card { background: white; border-radius: 12px; padding: 25px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); }
+        .card-full { grid-column: span 2; }
+        .card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; padding-bottom: 15px; border-bottom: 1px solid #eee; }
+        .card-title { font-size: 1.1rem; color: #1a1a2e; font-weight: 600; }
+        .chart-box { height: 250px; background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%); border-radius: 8px; display: flex; align-items: center; justify-content: center; position: relative; }
+        .chart-box::before { content: ''; position: absolute; bottom: 0; left: 0; right: 0; height: 60%; background: linear-gradient(180deg, transparent 0%, rgba(124,58,237,0.1) 100%); }
+        .chart-content { text-align: center; z-index: 1; }
+        .chart-content i { font-size: 3rem; color: #7c3aed; margin-bottom: 10px; }
+        .legend { display: flex; gap: 20px; flex-wrap: wrap; margin-top: 15px; }
+        .legend-item { display: flex; align-items: center; gap: 8px; font-size: 0.85rem; color: #666; }
+        .legend-color { width: 12px; height: 12px; border-radius: 3px; }
+        .data-table { width: 100%; border-collapse: collapse; }
+        .data-table th { background: #f8f9fa; padding: 12px; text-align: left; font-weight: 600; color: #666; font-size: 0.8rem; text-transform: uppercase; border-bottom: 2px solid #eee; }
+        .data-table td { padding: 12px; border-bottom: 1px solid #eee; color: #333; }
+        .data-table tr:hover { background: #f8f9fa; }
+        .progress-bar { height: 8px; background: #e9ecef; border-radius: 4px; overflow: hidden; }
+        .progress-fill { height: 100%; border-radius: 4px; }
+        .progress-fill.purple { background: linear-gradient(90deg, #7c3aed, #a855f7); }
+        .progress-fill.blue { background: linear-gradient(90deg, #3b82f6, #60a5fa); }
+        .progress-fill.teal { background: linear-gradient(90deg, #0d9488, #2dd4bf); }
+        .progress-fill.orange { background: linear-gradient(90deg, #f59e0b, #fbbf24); }
+        .skill-tag { display: inline-block; padding: 4px 10px; background: #f0f0f0; border-radius: 15px; font-size: 0.75rem; margin: 2px; }
+        .skill-tag.critical { background: rgba(239,68,68,0.1); color: #ef4444; }
+        .skill-tag.high { background: rgba(245,158,11,0.1); color: #f59e0b; }
+        .skill-tag.medium { background: rgba(59,130,246,0.1); color: #3b82f6; }
+        .metric-box { padding: 15px; background: #f8f9fa; border-radius: 8px; text-align: center; margin-bottom: 10px; }
+        .metric-value { font-size: 1.5rem; font-weight: 700; color: #7c3aed; }
+        .metric-label { font-size: 0.85rem; color: #666; margin-top: 5px; }
+        .half-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+    </style>
+</head>
+<body>
+    <div class="page-container">
+        <a href="nurse_dashboard.HTML" class="back-link">
+            <i class="fas fa-arrow-left"></i> Back to Nurse Leadership Dashboard
+        </a>
+        
+        <div class="page-header">
+            <div class="header-top">
+                <div class="header-title">
+                    <h1><i class="fas fa-chart-network"></i> Workforce Analytics</h1>
+                    <p>Deep dive into nursing workforce trends, skills mix, and labor analytics</p>
+                </div>
+                <div class="header-actions">
+                    <button class="btn btn-secondary"><i class="fas fa-download"></i> Export Report</button>
+                    <button class="btn btn-secondary"><i class="fas fa-share-alt"></i> Share</button>
+                    <button class="btn btn-primary"><i class="fas fa-calendar-alt"></i> Custom Range</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="stats-grid">
+            <div class="stat-card purple">
+                <div class="stat-icon purple"><i class="fas fa-user-nurse"></i></div>
+                <div class="stat-value">608</div>
+                <div class="stat-label">Total Nursing Staff</div>
+                <div class="stat-detail">+24 this quarter</div>
+            </div>
+            <div class="stat-card blue">
+                <div class="stat-icon blue"><i class="fas fa-clock"></i></div>
+                <div class="stat-value">4.2 yrs</div>
+                <div class="stat-label">Avg. Tenure</div>
+                <div class="stat-detail">Industry avg: 3.8 yrs</div>
+            </div>
+            <div class="stat-card teal">
+                <div class="stat-icon teal"><i class="fas fa-graduation-cap"></i></div>
+                <div class="stat-value">78%</div>
+                <div class="stat-label">Certified Staff</div>
+                <div">+5 class="stat-detail% from last year</div>
+            </div>
+            <div class="stat-card orange">
+                <div class="stat-icon orange"><i class="fas fa-dollar-sign"></i></div>
+                <div class="stat-value">$2.4M</div>
+                <div class="stat-label">Monthly Labor Cost</div>
+                <div class="stat-detail">Avg $3,947 per nurse</div>
+            </div>
+        </div>
+
+        <div class="filters-bar">
+            <div class="filter-group">
+                <span class="filter-label">Time Period:</span>
+                <select class="filter-select">
+                    <option>Last 12 Months</option>
+                    <option>Last 6 Months</option>
+                    <option>Last Quarter</option>
+                    <option>Year to Date</option>
+                </select>
+            </div>
+            <div class="filter-group">
+                <span class="filter-label">Facility:</span>
+                <select class="filter-select">
+                    <option>All Facilities</option>
+                    <option>Central Hospital</option>
+                    <option>Regional Medical</option>
+                    <option>District Hospital</option>
+                </select>
+            </div>
+            <div class="filter-group">
+                <span class="filter-label">Department:</span>
+                <select class="filter-select">
+                    <option>All Departments</option>
+                    <option>ICU</option>
+                    <option>Emergency</option>
+                    <option>Medical-Surgical</option>
+                </select>
+            </div>
+            <div class="filter-group">
+                <span class="filter-label">Compare To:</span>
+                <select class="filter-select">
+                    <option>Previous Period</option>
+                    <option>Same Period Last Year</option>
+                    <option>Benchmark</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="main-content">
+            <div class="content-grid">
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">Staffing Trends</h3>
+                    </div>
+                    <div class="chart-box">
+                        <div class="chart-content">
+                            <i class="fas fa-chart-area"></i>
+                            <div>Area Chart: Monthly Staff Count</div>
+                            <div style="font-size: 0.8rem; color: #999;">Showing 12-month trend</div>
+                        </div>
+                    </div>
+                    <div class="legend">
+                        <div class="legend="legend-color"-item"><span class style="background: #7c3aed;"></span> Total Staff</div>
+                        <div class="legend-item"><span class="legend-color" style="background: #3b82f6;"></span> New Hires</div>
+                        <div class="legend-item"><span class="legend-color" style="background: #ef4444;"></span> Separations</div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">Skills Mix Distribution</h3>
+                    </div>
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Qualification</th>
+                                <th>Count</th>
+                                <th>%</th>
+                                <th>Trend</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>RN - BSN</td>
+                                <td>245</td>
+                                <td>40%</td>
+                                <td><span style="color: #10b981;"><i class="fas fa-arrow-up"></i> 5%</span></td>
+                            </tr>
+                            <tr>
+                                <td>RN - Diploma</td>
+                                <td>182</td>
+                                <td>30%</td>
+                                <td><span style="color: #ef4444;"><i class="fas fa-arrow-down"></i> 2%</span></td>
+                            </tr>
+                            <tr>
+                                <td>LPN</td>
+                                <td>121</td>
+                                <td>20%</td>
+                                <td><span style="color: #10b981;"><i class="fas fa-arrow-up"></i> 3%</span></td>
+                            </tr>
+                            <tr>
+                                <td>APRN</td>
+                                <td>60</td>
+                                <td>10%</td>
+                                <td><span style="color: #10b981;"><i class="fas fa-arrow-up"></i> 8%</span></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">Age Distribution</h3>
+                    </div>
+                    <div class="chart-box">
+                        <div class="chart-content">
+                            <i class="fas fa-chart-pie"></i>
+                            <div>Pie Chart: Age Demographics</div>
+                            <div style="font-size: 0.8rem; color: #999;">Nurse age breakdown</div>
+                        </div>
+                    </div>
+                    <div class="legend">
+                        <div class="legend-item"><span class="legend-color" style="background: #7c3aed;"></span> 25-35 (32%)</div>
+                        <div class="legend-item"><span class="legend-color" style="background: #3b82f6;"></span> 36-45 (38%)</div>
+                        <div class="legend-item"><span class="legend-color" style="background: #0d9488;"></span> 46-55 (22%)</div>
+                        <div class="legend-item"><span class="legend-color" style="background: #f59e0b;"></span> 55+ (8%)</div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">Productivity Metrics</h3>
+                    </div>
+                    <div class="half-grid">
+                        <div class="metric-box">
+                            <div class="metric-value">92%</div>
+                            <div class="metric-label">Productivity Index</div>
+                        </div>
+                        <div class="metric-box">
+                            <div class="metric-value">96%</div>
+                            <div class="metric-label">Schedule Adherence</div>
+                        </div>
+                        <div class="metric-box">
+                            <div class="metric-value">4.2</div>
+                            <div class="metric-label">Patient/Nurse Ratio</div>
+                        </div>
+                        <div class="metric-box">
+                            <div class="metric-value">89%</div>
+                            <div class="metric-label">Skill Mix Efficiency</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card" style="margin-top: 25px;">
+                <div class="card-header">
+                    <h3 class="card-title">Critical Skills Gaps by Department</h3>
+                </div>
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Department</th>
+                            <th>Critical Gaps</th>
+                            <th>High Priority</th>
+                            <th>Training Status</th>
+                            <th>Action Plan</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>ICU</strong></td>
+                            <td>
+                                <span class="skill-tag critical">Ventilator Mgmt</span>
+                                <span class="skill-tag critical">ACLS</span>
+                            </td>
+                            <td>
+                                <span class="skill-tag high">ECMO</span>
+                                <span class="skill-tag high">CRRT</span>
+                            </td>
+                            <td>
+                                <div class="progress-bar" style="width: 80px;"><div class="progress-fill purple" style="width: 65%;"></div></div>
+                                <span style="font-size: 0.8rem;">65% trained</span>
+                            </td>
+                            <td><button class="btn" style="padding: 5px 10px; font-size: 0.8rem; background: #f0f0f0;">View Plan</button></td>
+                        </tr>
+                        <tr>
+                            <td><strong>Emergency</strong></td>
+                            <td>
+                                <span class="skill-tag critical">Trauma Care</span>
+                                <span class="skill-tag critical">TNCC</span>
+                            </td>
+                            <td>
+                                <span class="skill-tag high">Pediatric ED</span>
+                                <span class="skill-tag medium">Stroke Cert</span>
+                            </td>
+                            <td>
+                                <div class="progress-bar" style="width: 80px;"><div class="progress-fill blue" style="width: 78%;"></div></div>
+                                <span style="font-size: 0.8rem;">78% trained</span>
+                            </td>
+                            <td><button class="btn" style="padding: 5px 10px; font-size: 0.8rem; background: #f0f0f0;">View Plan</button></td>
+                        </tr>
+                        <tr>
+                            <td><strong>Operating Room</strong></td>
+                            <td>
+                                <span class="skill-tag critical">Robotic Surgery</span>
+                                <span class="skill-tag critical">CNOR</span>
+                            </td>
+                            <td>
+                                <span class="skill-tag high">PACU</span>
+                            </td>
+                            <td>
+                                <div class="progress-bar" style="width: 80px;"><div class="progress-fill teal" style="width: 55%;"></div></div>
+                                <span style="font-size: 0.8rem;">55% trained</span>
+                            </td>
+                            <td><button class="btn" style="padding: 5px 10px; font-size: 0.8rem; background: #f0f0f0;">View Plan</button></td>
+                        </tr>
+                        <tr>
+                            <td><strong>Pediatrics</strong></td>
+                            <td>
+                                <span class="skill-tag high">PALS</span>
+                                <span class="skill-tag medium">NICU</span>
+                            </td>
+                            <td>
+                                <span class="skill-tag medium">Pediatric CC</span>
+                            </td>
+                            <td>
+                                <div class="progress-bar" style="width: 80px;"><div class="progress-fill orange" style="width: 82%;"></div></div>
+                                <span style="font-size: 0.8rem;">82% trained</span>
+                            </td>
+                            <td><button class="btn" style="padding: 5px 10px; font-size: 0.8rem; background: #f0f0f0;">View Plan</button></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="content-grid" style="margin-top: 25px;">
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">Labor Cost Analysis</h3>
+                    </div>
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Category</th>
+                                <th>Monthly</th>
+                                <th>YTD</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Base Salary</td>
+                                <td>$1,850,000</td>
+                                <td>$22,200,000</td>
+                            </tr>
+                            <tr>
+                                <td>Overtime</td>
+                                <td>$485,000</td>
+                                <td>$5,820,000</td>
+                            </tr>
+                            <tr>
+                                <td>Benefits</td>
+                                <td>$462,500</td>
+                                <td>$5,550,000</td>
+                            </tr>
+                            <tr>
+                                <td>Agency Staff</td>
+                                <td>$185,000</td>
+                                <td>$2,220,000</td>
+                            </tr>
+                            <tr style="font-weight: 600; background: #f8f9fa;">
+                                <td>Total</td>
+                                <td>$2,982,500</td>
+                                <td>$35,790,000</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">Succession Pipeline</h3>
+                    </div>
+                    <div class="metric-box" style="background: linear-gradient(135deg, #f3e8ff 0%, #ede9fe 100%);">
+                        <div class="metric-value" style="color: #7c3aed;">18</div>
+                        <div class="metric-label">Leadership Ready</div>
+                    </div>
+                    <div class="metric-box" style="background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%);">
+                        <div class="metric-value" style="color: #3b82f6;">45</div>
+                        <div class="metric-label">In Development</div>
+                    </div>
+                    <div class="metric-box" style="background: linear-gradient(135deg, #ccfbf1 0%, #99f6e4 100%);">
+                        <div class="metric-value" style="color: #0d9488;">82</div>
+                        <div class="metric-label">High Potential</div>
+                    </div>
+                    <button class="btn" style="width: 100%; margin-top: 15px; justify-content: center; background: #7c3aed; color: white;">
+                        <i class="fas fa-users"></i> View Talent Matrix
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,861 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Doctors - Hospital Management System</title>
+    <link rel="stylesheet" href="STYLE.CSS">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(3px);
+            animation: fadeIn 0.25s ease-out;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        .modal-content {
+            background-color: #fff;
+            margin: 0;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            padding: 0;
+            border-radius: 12px;
+            width: 90%;
+            max-width: 520px;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            animation: slideIn 0.3s ease-out;
+        }
+        
+        @keyframes slideIn {
+            from { transform: translate(-50%, -50%) scale(0.95); opacity: 0; }
+            to { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+        }
+        
+        .modal-header {
+            background: linear-gradient(135deg, #2c5282 0%, #3182ce 100%);
+            color: white;
+            padding: 18px 24px;
+            border-radius: 12px 12px 0 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 1;
+        }
+        
+        .modal-header h2 {
+            margin: 0;
+            font-size: 1.2rem;
+            font-weight: 600;
+            letter-spacing: 0.3px;
+        }
+        
+        .modal-header h2 i {
+            margin-right: 10px;
+            opacity: 0.9;
+        }
+        
+        .close {
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 24px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.2s;
+            line-height: 1;
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+        }
+        
+        .close:hover {
+            color: #fff;
+            background: rgba(255, 255, 255, 0.15);
+        }
+        
+        #doctorForm, #editDoctorForm {
+            padding: 22px 26px;
+        }
+        
+        .form-row {
+            display: flex;
+            gap: 14px;
+        }
+        
+        .form-row .form-group {
+            flex: 1;
+        }
+        
+        .form-group {
+            margin-bottom: 16px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 6px;
+            font-weight: 600;
+            color: #2d3748;
+            font-size: 12.5px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 10px 14px;
+            border: 1px solid #e2e8f0;
+            border-radius: 6px;
+            font-size: 14px;
+            box-sizing: border-box;
+            transition: all 0.2s;
+            background: #f7fafc;
+            color: #2d3748;
+        }
+        
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #3182ce;
+            box-shadow: 0 0 0 3px rgba(49, 130, 206, 0.15);
+            background: #fff;
+        }
+        
+        .form-group textarea {
+            resize: vertical;
+            min-height: 70px;
+        }
+        
+        .form-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 12px;
+            margin-top: 20px;
+            padding-top: 18px;
+            border-top: 1px solid #e2e8f0;
+        }
+        
+        .btn-secondary {
+            background: #edf2f7;
+            color: #4a5568;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.2s;
+        }
+        
+        .btn-secondary:hover {
+            background: #e2e8f0;
+            color: #2d3748;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, #2c5282 0%, #3182ce 100%);
+            color: white;
+            border: none;
+            padding: 10px 22px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.2s;
+            box-shadow: 0 2px 4px rgba(49, 130, 206, 0.3);
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 8px rgba(49, 130, 206, 0.4);
+        }
+        
+        /* View Modal Styles */
+        .doctor-info-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 14px;
+            padding: 8px 0;
+        }
+        
+        .doctor-info-item {
+            padding: 14px;
+            background: linear-gradient(135deg, #f7fafc 0%, #edf2f7 100%);
+            border-radius: 8px;
+            border-left: 3px solid #3182ce;
+        }
+        
+        .doctor-info-item label {
+            display: block;
+            font-size: 11px;
+            color: #718096;
+            margin-bottom: 5px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            font-weight: 600;
+        }
+        
+        .doctor-info-item span {
+            font-size: 15px;
+            font-weight: 600;
+            color: #2d3748;
+        }
+        
+        .doctor-avatar-large {
+            width: 90px;
+            height: 90px;
+            background: linear-gradient(135deg, #2c5282 0%, #3182ce 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 28px;
+            font-weight: 600;
+            margin: 0 auto 18px;
+            box-shadow: 0 4px 12px rgba(49, 130, 206, 0.4);
+        }
+        
+        .view-modal-content {
+            text-align: center;
+            padding-bottom: 10px;
+        }
+        
+        .view-modal-content h3 {
+            margin: 0 0 6px 0;
+            font-size: 1.4rem;
+            color: #1a202c;
+        }
+        
+        .view-modal-content .doctor-id {
+            margin: 0;
+            color: #718096;
+            font-size: 14px;
+            font-weight: 500;
+        }
+    </style>
+</head>
+<body>
+    <div class="dashboard-container">
+        <div class="sidebar">
+            <div class="sidebar-header">
+                <img src="IMAGES/HMS.jpg" alt="HMS Logo">
+                <p>Hospital Management</p>
+            </div>
+            <ul class="sidebar-menu">
+                <li><a href="DASHBOARD.HTML"><i class="fas fa-tachometer-alt"></i> <span>Dashboard</span></a></li>
+                <li><a href="patients.HTML"><i class="fas fa-user-injured"></i> <span>Patients</span></a></li>
+                <li class="active"><a href="doctors.HTML"><i class="fas fa-user-md"></i> <span>Doctors</span></a></li>
+                <li><a href="appointments.HTML"><i class="fas fa-calendar-check"></i> <span>Appointments</span></a></li>
+                <li><a href="departments.HTML"><i class="fas fa-hospital"></i> <span>Departments</span></a></li>
+                <li><a href="billing.HTML"><i class="fas fa-file-invoice-dollar"></i> <span>Billing</span></a></li>
+                <li><a href="reports.HTML"><i class="fas fa-chart-line"></i> <span>Reports</span></a></li>
+                <li><a href="settings.HTML"><i class="fas fa-cog"></i> <span>Settings</span></a></li>
+                <li><a href="LOGOUT.HTML"><i class="fas fa-sign-out-alt"></i> <span>Logout</span></a></li>
+            </ul>
+        </div>
+        <div class="main-content">
+            <div class="header">
+                <h1><i class="fas fa-user-md"></i> Doctor Management</h1>
+                <div class="user-info">
+                    <div id="dashboard-avatar" class="avatar"><i class="fas fa-user"></i></div>
+                    <span id="dashboard-username">Admin User</span>
+                </div>
+            </div>
+            <div class="page-header">
+                <input type="text" id="doctorSearch" class="search-box" placeholder="Search doctors by name, ID, specialty..." onkeyup="searchDoctors()">
+                <button class="btn-primary" id="addDoctorBtn"><i class="fas fa-plus"></i> Add Doctor</button>
+            </div>
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>Doctor ID</th>
+                        <th>Name</th>
+                        <th>Specialty</th>
+                        <th>Department</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>DOC-001</td>
+                        <td><div style="display: flex; align-items: center; gap: 10px;"><div style="width: 32px; height: 32px; background: var(--primary-gradient); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-size: 0.75em; font-weight: 600;">JS</div>Dr. John Smith</div></td>
+                        <td>Cardiology</td>
+                        <td>Heart Center</td>
+                        <td><span class="status active">Available</span></td>
+                        <td>
+                            <button class="action-btn view"><i class="fas fa-eye"></i></button>
+                            <button class="action-btn edit"><i class="fas fa-edit"></i></button>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>DOC-002</td>
+                        <td><div style="display: flex; align-items: center; gap: 10px;"><div style="width: 32px; height: 32px; background: var(--primary-gradient); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-size: 0.75em; font-weight: 600;">SJ</div>Dr. Sarah Johnson</div></td>
+                        <td>Neurology</td>
+                        <td>Brain Center</td>
+                        <td><span class="status active">Available</span></td>
+                        <td>
+                            <button class="action-btn view"><i class="fas fa-eye"></i></button>
+                            <button class="action-btn edit"><i class="fas fa-edit"></i></button>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>DOC-003</td>
+                        <td><div style="display: flex; align-items: center; gap: 10px;"><div style="width: 32px; height: 32px; background: var(--primary-gradient); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-size: 0.75em; font-weight: 600;">MW</div>Dr. Michael Williams</div></td>
+                        <td>Pediatrics</td>
+                        <td>Children's Wing</td>
+                        <td><span class="status pending">On Leave</span></td>
+                        <td>
+                            <button class="action-btn view"><i class="fas fa-eye"></i></button>
+                            <button class="action-btn edit"><i class="fas fa-edit"></i></button>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>DOC-004</td>
+                        <td><div style="display: flex; align-items: center; gap: 10px;"><div style="width: 32px; height: 32px; background: var(--primary-gradient); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-size: 0.75em; font-weight: 600;">EL</div>Dr. Emily Lee</div></td>
+                        <td>Dermatology</td>
+                        <td>Skin Center</td>
+                        <td><span class="status active">Available</span></td>
+                        <td>
+                            <button class="action-btn view"><i class="fas fa-eye"></i></button>
+                            <button class="action-btn edit"><i class="fas fa-edit"></i></button>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>DOC-005</td>
+                        <td><div style="display: flex; align-items: center; gap: 10px;"><div style="width: 32px; height: 32px; background: var(--primary-gradient); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-size: 0.75em; font-weight: 600;">RB</div>Dr. Robert Brown</div></td>
+                        <td>Orthopedics</td>
+                        <td>Bone & Joint Center</td>
+                        <td><span class="status active">Available</span></td>
+                        <td>
+                            <button class="action-btn view"><i class="fas fa-eye"></i></button>
+                            <button class="action-btn edit"><i class="fas fa-edit"></i></button>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>DOC-006</td>
+                        <td><div style="display: flex; align-items: center; gap: 10px;"><div style="width: 32px; height: 32px; background: var(--primary-gradient); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-size: 0.75em; font-weight: 600;">JG</div>Dr. Jennifer Garcia</div></td>
+                        <td>Obstetrics</td>
+                        <td>Maternity Wing</td>
+                        <td><span class="status active">Available</span></td>
+                        <td>
+                            <button class="action-btn view"><i class="fas fa-eye"></i></button>
+                            <button class="action-btn edit"><i class="fas fa-edit"></i></button>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>DOC-007</td>
+                        <td><div style="display: flex; align-items: center; gap: 10px;"><div style="width: 32px; height: 32px; background: var(--primary-gradient); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-size: 0.75em; font-weight: 600;">DK</div>Dr. David Kim</div></td>
+                        <td>Ophthalmology</td>
+                        <td>Eye Center</td>
+                        <td><span class="status pending">On Leave</span></td>
+                        <td>
+                            <button class="action-btn view"><i class="fas fa-eye"></i></button>
+                            <button class="action-btn edit"><i class="fas fa-edit"></i></button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Add Doctor Modal -->
+    <div id="doctorModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2><i class="fas fa-user-md"></i> Add New Doctor</h2>
+                <span class="close">&times;</span>
+            </div>
+            <form id="doctorForm">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="firstName">First Name</label>
+                        <input type="text" id="firstName" name="firstName" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="lastName">Last Name</label>
+                        <input type="text" id="lastName" name="lastName" required>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="specialty">Specialty</label>
+                        <select id="specialty" name="specialty" required>
+                            <option value="">Select Specialty</option>
+                            <option value="Cardiology">Cardiology</option>
+                            <option value="Neurology">Neurology</option>
+                            <option value="Pediatrics">Pediatrics</option>
+                            <option value="Dermatology">Dermatology</option>
+                            <option value="Orthopedics">Orthopedics</option>
+                            <option value="Obstetrics">Obstetrics</option>
+                            <option value="Ophthalmology">Ophthalmology</option>
+                            <option value="General Medicine">General Medicine</option>
+                            <option value="Psychiatry">Psychiatry</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="department">Department</label>
+                        <select id="department" name="department" required>
+                            <option value="">Select Department</option>
+                            <option value="Heart Center">Heart Center</option>
+                            <option value="Brain Center">Brain Center</option>
+                            <option value="Children's Wing">Children's Wing</option>
+                            <option value="Skin Center">Skin Center</option>
+                            <option value="Bone & Joint Center">Bone & Joint Center</option>
+                            <option value="Maternity Wing">Maternity Wing</option>
+                            <option value="Eye Center">Eye Center</option>
+                            <option value="General Ward">General Ward</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="phone">Phone Number</label>
+                        <input type="tel" id="phone" name="phone" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="email">Email</label>
+                        <input type="email" id="email" name="email" required>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="qualification">Qualification</label>
+                    <input type="text" id="qualification" name="qualification" placeholder="e.g., MD, PhD, MBBS">
+                </div>
+                <div class="form-group">
+                    <label for="experience">Years of Experience</label>
+                    <input type="number" id="experience" name="experience" min="0" placeholder="e.g., 5">
+                </div>
+                <div class="form-actions">
+                    <button type="button" class="btn-secondary" id="cancelBtn">Cancel</button>
+                    <button type="submit" class="btn-primary"><i class="fas fa-save"></i> Save Doctor</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- View Doctor Modal -->
+    <div id="viewModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2><i class="fas fa-user-md"></i> Doctor Details</h2>
+                <span class="close">&times;</span>
+            </div>
+            <div id="viewDoctorContent" style="padding: 22px 26px;">
+                <!-- Content will be populated by JavaScript -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Edit Doctor Modal -->
+    <div id="editModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2><i class="fas fa-user-edit"></i> Edit Doctor Profile</h2>
+                <span class="close">&times;</span>
+            </div>
+            <form id="editDoctorForm">
+                <input type="hidden" id="editDoctorId">
+                <div style="background: linear-gradient(135deg, #f7fafc 0%, #edf2f7 100%); padding: 16px; border-radius: 8px; margin-bottom: 20px;">
+                    <div style="display: flex; align-items: center; gap: 15px;">
+                        <div id="editDoctorAvatar" style="width: 60px; height: 60px; background: linear-gradient(135deg, #2c5282 0%, #3182ce 100%); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-size: 20px; font-weight: 600;"></div>
+                        <div>
+                            <p style="margin: 0; font-size: 13px; color: #718096; text-transform: uppercase; letter-spacing: 0.5px;">Doctor ID</p>
+                            <p id="editDoctorIdDisplay" style="margin: 2px 0 0 0; font-size: 16px; font-weight: 600; color: #2d3748;"></p>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="editFirstName"><i class="fas fa-user"></i> First Name</label>
+                        <input type="text" id="editFirstName" name="editFirstName" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="editLastName"><i class="fas fa-user"></i> Last Name</label>
+                        <input type="text" id="editLastName" name="editLastName" required>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="editSpecialty"><i class="fas fa-stethoscope"></i> Specialty</label>
+                        <select id="editSpecialty" name="editSpecialty" required>
+                            <option value="Cardiology">Cardiology</option>
+                            <option value="Neurology">Neurology</option>
+                            <option value="Pediatrics">Pediatrics</option>
+                            <option value="Dermatology">Dermatology</option>
+                            <option value="Orthopedics">Orthopedics</option>
+                            <option value="Obstetrics">Obstetrics</option>
+                            <option value="Ophthalmology">Ophthalmology</option>
+                            <option value="General Medicine">General Medicine</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="editDepartment"><i class="fas fa-hospital"></i> Department</label>
+                        <select id="editDepartment" name="editDepartment" required>
+                            <option value="Heart Center">Heart Center</option>
+                            <option value="Brain Center">Brain Center</option>
+                            <option value="Children's Wing">Children's Wing</option>
+                            <option value="Skin Center">Skin Center</option>
+                            <option value="Bone & Joint Center">Bone & Joint Center</option>
+                            <option value="Maternity Wing">Maternity Wing</option>
+                            <option value="Eye Center">Eye Center</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="editPhone"><i class="fas fa-phone"></i> Phone Number</label>
+                    <input type="tel" id="editPhone" name="editPhone" required>
+                </div>
+                <div class="form-group">
+                    <label for="editStatus"><i class="fas fa-info-circle"></i> Status</label>
+                    <select id="editStatus" name="editStatus">
+                        <option value="Available">✓ Available</option>
+                        <option value="On Leave">⏸ On Leave</option>
+                    </select>
+                </div>
+                <div style="background: #fffbeb; border-left: 4px solid #f6ad55; padding: 12px; border-radius: 4px; margin-bottom: 15px;">
+                    <p style="margin: 0; font-size: 13px; color: #744210;"><i class="fas fa-exclamation-triangle"></i> Changes will be updated immediately in the system.</p>
+                </div>
+                <div class="form-actions">
+                    <button type="button" class="btn-secondary" id="cancelEditBtn"><i class="fas fa-times"></i> Cancel</button>
+                    <button type="submit" class="btn-primary"><i class="fas fa-check"></i> Save Changes</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // Doctor data storage
+        let doctorsData = [];
+        
+        // Initialize doctor data from table
+        function initializeDoctorData() {
+            const rows = document.querySelectorAll('.data-table tbody tr');
+            rows.forEach(row => {
+                const cells = row.cells;
+                const doctorId = cells[0].textContent;
+                const nameDiv = cells[1].querySelector('div');
+                const nameText = nameDiv.textContent.trim();
+                const fullName = nameText.replace('Dr. ', '');
+                const nameParts = fullName.split(' ');
+                const firstName = nameParts[0];
+                const lastName = nameParts.slice(1).join(' ');
+                const specialty = cells[2].textContent;
+                const dept = cells[3].textContent;
+                const statusCell = cells[4].querySelector('.status');
+                const status = statusCell.classList.contains('active') ? 'Available' : 'On Leave';
+                
+                doctorsData.push({
+                    id: doctorId,
+                    firstName: firstName,
+                    lastName: lastName,
+                    specialty: specialty,
+                    department: dept,
+                    phone: '+1 555-0000',
+                    status: status,
+                    row: row
+                });
+            });
+        }
+        
+        // Modal functionality
+        const modal = document.getElementById("doctorModal");
+        const addDoctorBtn = document.getElementById("addDoctorBtn");
+        const closeBtn = document.getElementsByClassName("close")[0];
+        const cancelBtn = document.getElementById("cancelBtn");
+        const doctorForm = document.getElementById("doctorForm");
+        
+        // View Modal
+        const viewModal = document.getElementById("viewModal");
+        const viewDoctorContent = document.getElementById("viewDoctorContent");
+        
+        // Edit Modal
+        const editModal = document.getElementById("editModal");
+        const editDoctorForm = document.getElementById("editDoctorForm");
+        const cancelEditBtn = document.getElementById("cancelEditBtn");
+        
+        // Open add doctor modal
+        addDoctorBtn.onclick = function() {
+            modal.style.display = "block";
+        }
+        
+        // Close modal with X button
+        closeBtn.onclick = function() {
+            modal.style.display = "none";
+            if (viewModal.style.display === "block") viewModal.style.display = "none";
+            if (editModal.style.display === "block") editModal.style.display = "none";
+        }
+        
+        // Close modal with Cancel button
+        cancelBtn.onclick = function() {
+            modal.style.display = "none";
+            doctorForm.reset();
+        }
+        
+        // Close edit modal
+        cancelEditBtn.onclick = function() {
+            editModal.style.display = "none";
+            editDoctorForm.reset();
+        }
+        
+        // Close modal when clicking outside
+        window.onclick = function(event) {
+            if (event.target == modal) {
+                modal.style.display = "none";
+                doctorForm.reset();
+            }
+            if (event.target == viewModal) {
+                viewModal.style.display = "none";
+            }
+            if (event.target == editModal) {
+                editModal.style.display = "none";
+                editDoctorForm.reset();
+            }
+        }
+        
+        // Handle add doctor form submission
+        doctorForm.onsubmit = function(e) {
+            e.preventDefault();
+            
+            // Get form values
+            const firstName = document.getElementById("firstName").value;
+            const lastName = document.getElementById("lastName").value;
+            const fullName = "Dr. " + firstName + " " + lastName;
+            const initials = firstName.charAt(0) + lastName.charAt(0);
+            const specialty = document.getElementById("specialty").value;
+            const department = document.getElementById("department").value;
+            const phone = document.getElementById("phone").value;
+            
+            // Generate new doctor ID
+            const tableBody = document.querySelector(".data-table tbody");
+            const rowCount = tableBody.rows.length + 1;
+            const doctorId = "DOC-" + String(rowCount).padStart(3, '0');
+            
+            // Create new row
+            const newRow = tableBody.insertRow();
+            newRow.innerHTML = `
+                <td>${doctorId}</td>
+                <td><div style="display: flex; align-items: center; gap: 10px;"><div style="width: 32px; height: 32px; background: var(--primary-gradient); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-size: 0.75em; font-weight: 600;">${initials}</div>${fullName}</div></td>
+                <td>${specialty}</td>
+                <td>${department}</td>
+                <td><span class="status active">Available</span></td>
+                <td>
+                    <button class="action-btn view"><i class="fas fa-eye"></i></button>
+                    <button class="action-btn edit"><i class="fas fa-edit"></i></button>
+                </td>
+            `;
+            
+            // Add event listeners to new buttons
+            addActionListeners(newRow);
+            
+            // Add to doctors data
+            doctorsData.push({
+                id: doctorId,
+                firstName: firstName,
+                lastName: lastName,
+                specialty: specialty,
+                department: department,
+                phone: phone,
+                status: 'Available',
+                row: newRow
+            });
+            
+            // Close modal and reset form
+            modal.style.display = "none";
+            doctorForm.reset();
+            
+            alert("Doctor added successfully!");
+        }
+        
+        // View doctor details
+        function viewDoctor(doctorId) {
+            const doctor = doctorsData.find(d => d.id === doctorId);
+            if (!doctor) return;
+            
+            const initials = doctor.firstName.charAt(0) + doctor.lastName.charAt(0);
+            const statusClass = doctor.status === 'Available' ? 'active' : 'pending';
+            
+            viewDoctorContent.innerHTML = `
+                <div class="view-modal-content">
+                    <div class="doctor-avatar-large">${initials}</div>
+                    <h3>Dr. ${doctor.firstName} ${doctor.lastName}</h3>
+                    <p class="doctor-id">${doctor.id}</p>
+                </div>
+                <div class="doctor-info-grid">
+                    <div class="doctor-info-item">
+                        <label>Specialty</label>
+                        <span>${doctor.specialty}</span>
+                    </div>
+                    <div class="doctor-info-item">
+                        <label>Department</label>
+                        <span>${doctor.department}</span>
+                    </div>
+                    <div class="doctor-info-item">
+                        <label>Phone</label>
+                        <span>${doctor.phone}</span>
+                    </div>
+                    <div class="doctor-info-item">
+                        <label>Status</label>
+                        <span class="status ${statusClass}" style="padding: 4px 12px; border-radius: 20px; font-size: 12px;">${doctor.status}</span>
+                    </div>
+                </div>
+            `;
+            
+            viewModal.style.display = "block";
+        }
+        
+        // Edit doctor
+        function editDoctor(doctorId) {
+            const doctor = doctorsData.find(d => d.id === doctorId);
+            if (!doctor) return;
+            
+            const initials = doctor.firstName.charAt(0) + doctor.lastName.charAt(0);
+            
+            document.getElementById("editDoctorId").value = doctor.id;
+            document.getElementById("editDoctorIdDisplay").textContent = doctor.id;
+            document.getElementById("editDoctorAvatar").textContent = initials;
+            document.getElementById("editFirstName").value = doctor.firstName;
+            document.getElementById("editLastName").value = doctor.lastName;
+            document.getElementById("editSpecialty").value = doctor.specialty;
+            document.getElementById("editDepartment").value = doctor.department;
+            document.getElementById("editPhone").value = doctor.phone;
+            document.getElementById("editStatus").value = doctor.status;
+            
+            editModal.style.display = "block";
+        }
+        
+        // Handle edit form submission
+        editDoctorForm.onsubmit = function(e) {
+            e.preventDefault();
+            
+            const doctorId = document.getElementById("editDoctorId").value;
+            const doctor = doctorsData.find(d => d.id === doctorId);
+            if (!doctor) return;
+            
+            const firstName = document.getElementById("editFirstName").value;
+            const lastName = document.getElementById("editLastName").value;
+            const fullName = "Dr. " + firstName + " " + lastName;
+            const initials = firstName.charAt(0) + lastName.charAt(0);
+            const specialty = document.getElementById("editSpecialty").value;
+            const department = document.getElementById("editDepartment").value;
+            const phone = document.getElementById("editPhone").value;
+            const status = document.getElementById("editStatus").value;
+            const statusClass = status === 'Available' ? 'active' : 'pending';
+            
+            // Update table row
+            const cells = doctor.row.cells;
+            cells[1].innerHTML = `<div style="display: flex; align-items: center; gap: 10px;"><div style="width: 32px; height: 32px; background: var(--primary-gradient); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-size: 0.75em; font-weight: 600;">${initials}</div>${fullName}</div>`;
+            cells[2].textContent = specialty;
+            cells[3].textContent = department;
+            cells[4].innerHTML = `<span class="status ${statusClass}">${status}</span>`;
+            
+            // Update doctor data
+            doctor.firstName = firstName;
+            doctor.lastName = lastName;
+            doctor.specialty = specialty;
+            doctor.department = department;
+            doctor.phone = phone;
+            doctor.status = status;
+            
+            // Close modal
+            editModal.style.display = "none";
+            editDoctorForm.reset();
+            
+            alert("Doctor updated successfully!");
+        }
+        
+        // Add event listeners to action buttons
+        function addActionListeners(row) {
+            const viewBtn = row.querySelector('.action-btn.view');
+            const editBtn = row.querySelector('.action-btn.edit');
+            
+            viewBtn.onclick = function() {
+                const doctorId = row.cells[0].textContent;
+                viewDoctor(doctorId);
+            };
+            
+            editBtn.onclick = function() {
+                const doctorId = row.cells[0].textContent;
+                editDoctor(doctorId);
+            };
+        }
+        
+        // Initialize on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeDoctorData();
+            
+            // Add listeners to existing rows
+            document.querySelectorAll('.data-table tbody tr').forEach(row => {
+                addActionListeners(row);
+            });
+        });
+    </script>
+</body>
+<script>
+function searchDoctors() {
+    const searchInput = document.getElementById('doctorSearch').value.toLowerCase();
+    const table = document.querySelector('.data-table');
+    const rows = table.getElementsByTagName('tbody')[0].getElementsByTagName('tr');
+    
+    for (let i = 0; i < rows.length; i++) {
+        const row = rows[i];
+        const cells = row.getElementsByTagName('td');
+        let found = false;
+        
+        for (let j = 0; j < cells.length; j++) {
+            const cellText = cells[j].textContent || cells[j].innerText;
+            if (cellText.toLowerCase().indexOf(searchInput) > -1) {
+                found = true;
+                break;
+            }
+        }
+        
+        if (found) {
+            row.style.display = '';
+        } else {
+            row.style.display = 'none';
+        }
+    }
+}
+
+window.onload = function() {
+    const savedPhoto = localStorage.getItem('profilePhoto');
+    if (savedPhoto) {
+        const dashboardAvatar = document.getElementById('dashboard-avatar');
+        if (dashboardAvatar) {
+            dashboardAvatar.innerHTML = '<img src="' + savedPhoto + '" style="width: 100%; height: 100%; object-fit: cover; border-radius: 50%;">';
+        }
+    }
+    const savedSettings = localStorage.getItem('userSettings');
+    if (savedSettings) {
+        const settings = JSON.parse(savedSettings);
+        const fullName = settings.firstName + ' ' + settings.lastName;
+        const usernameEl = document.getElementById('dashboard-username');
+        if (usernameEl) usernameEl.textContent = fullName;
+    }
+};
+</script>
+</html>

@@ -1,0 +1,857 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Departments - Hospital Management System</title>
+    <link rel="stylesheet" href="STYLE.CSS">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(3px);
+            animation: fadeIn 0.25s ease-out;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        .modal-content {
+            background-color: #fff;
+            margin: 0;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            padding: 0;
+            border-radius: 12px;
+            width: 90%;
+            max-width: 480px;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            animation: slideIn 0.3s ease-out;
+        }
+        
+        @keyframes slideIn {
+            from { transform: translate(-50%, -50%) scale(0.95); opacity: 0; }
+            to { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+        }
+        
+        .modal-header {
+            background: linear-gradient(135deg, #2c5282 0%, #3182ce 100%);
+            color: white;
+            padding: 18px 24px;
+            border-radius: 12px 12px 0 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 1;
+        }
+        
+        .modal-header h2 {
+            margin: 0;
+            font-size: 1.2rem;
+            font-weight: 600;
+            letter-spacing: 0.3px;
+        }
+        
+        .modal-header h2 i {
+            margin-right: 10px;
+            opacity: 0.9;
+        }
+        
+        .close {
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 24px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.2s;
+            line-height: 1;
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+        }
+        
+        .close:hover {
+            color: #fff;
+            background: rgba(255, 255, 255, 0.15);
+        }
+        
+        #departmentForm, #editDepartmentForm {
+            padding: 22px 26px;
+        }
+        
+        .form-group {
+            margin-bottom: 16px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 6px;
+            font-weight: 600;
+            color: #2d3748;
+            font-size: 12.5px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 10px 14px;
+            border: 1px solid #e2e8f0;
+            border-radius: 6px;
+            font-size: 14px;
+            box-sizing: border-box;
+            transition: all 0.2s;
+            background: #f7fafc;
+            color: #2d3748;
+        }
+        
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #3182ce;
+            box-shadow: 0 0 0 3px rgba(49, 130, 206, 0.15);
+            background: #fff;
+        }
+        
+        .form-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 12px;
+            margin-top: 20px;
+            padding-top: 18px;
+            border-top: 1px solid #e2e8f0;
+        }
+        
+        .btn-secondary {
+            background: #edf2f7;
+            color: #4a5568;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.2s;
+        }
+        
+        .btn-secondary:hover {
+            background: #e2e8f0;
+            color: #2d3748;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, #2c5282 0%, #3182ce 100%);
+            color: white;
+            border: none;
+            padding: 10px 22px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.2s;
+            box-shadow: 0 2px 4px rgba(49, 130, 206, 0.3);
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 8px rgba(49, 130, 206, 0.4);
+        }
+        
+        /* Department Card Actions */
+        .dept-card-actions {
+            display: flex;
+            gap: 8px;
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 1px solid #e2e8f0;
+        }
+        
+        .dept-card-actions button {
+            flex: 1;
+            padding: 8px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 13px;
+            transition: all 0.2s;
+        }
+        
+        .dept-card-actions .view-btn {
+            background: #edf2f7;
+            color: #4a5568;
+        }
+        
+        .dept-card-actions .view-btn:hover {
+            background: #e2e8f0;
+        }
+        
+        .dept-card-actions .edit-btn {
+            background: #3182ce;
+            color: white;
+        }
+        
+        .dept-card-actions .edit-btn:hover {
+            background: #2c5282;
+        }
+        
+        /* Department Info Modal */
+        .dept-info-section {
+            padding: 10px 0;
+        }
+        
+        .dept-info-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+            margin-top: 15px;
+        }
+        
+        .dept-info-item {
+            background: #f7fafc;
+            padding: 12px;
+            border-radius: 8px;
+            text-align: center;
+        }
+        
+        .dept-info-item i {
+            font-size: 18px;
+            color: #3182ce;
+            margin-bottom: 5px;
+        }
+        
+        .dept-info-item div {
+            font-size: 12px;
+            color: #718096;
+            text-transform: uppercase;
+        }
+        
+        .dept-info-item span {
+            display: block;
+            font-size: 15px;
+            font-weight: 600;
+            color: #2d3748;
+            margin-top: 3px;
+        }
+        
+        .dept-icon-large {
+            width: 80px;
+            height: 80px;
+            margin: 0 auto 15px;
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 32px;
+        }
+    </style>
+</head>
+<body>
+    <div class="dashboard-container">
+        <div class="sidebar">
+            <div class="sidebar-header">
+                <img src="IMAGES/HMS.jpg" alt="HMS Logo">
+                <p>Hospital Management</p>
+            </div>
+            <ul class="sidebar-menu">
+                <li><a href="DASHBOARD.HTML"><i class="fas fa-tachometer-alt"></i> <span>Dashboard</span></a></li>
+                <li><a href="patients.HTML"><i class="fas fa-user-injured"></i> <span>Patients</span></a></li>
+                <li><a href="doctors.HTML"><i class="fas fa-user-md"></i> <span>Doctors</span></a></li>
+                <li><a href="appointments.HTML"><i class="fas fa-calendar-check"></i> <span>Appointments</span></a></li>
+                <li class="active"><a href="departments.HTML"><i class="fas fa-hospital"></i> <span>Departments</span></a></li>
+                <li><a href="billing.HTML"><i class="fas fa-file-invoice-dollar"></i> <span>Billing</span></a></li>
+                <li><a href="reports.HTML"><i class="fas fa-chart-line"></i> <span>Reports</span></a></li>
+                <li><a href="settings.HTML"><i class="fas fa-cog"></i> <span>Settings</span></a></li>
+                <li><a href="LOGOUT.HTML"><i class="fas fa-sign-out-alt"></i> <span>Logout</span></a></li>
+            </ul>
+        </div>
+        <div class="main-content">
+            <div class="header">
+                <h1><i class="fas fa-hospital"></i> Department Management</h1>
+                <div class="user-info">
+                    <div id="dashboard-avatar" class="avatar"><i class="fas fa-user"></i></div>
+                    <span id="dashboard-username">Admin User</span>
+                </div>
+            </div>
+            <div class="page-header">
+                <input type="text" id="departmentSearch" class="search-box" placeholder="Search departments by name, head, location..." onkeyup="searchDepartments()">
+                <button class="btn-primary" id="addDepartmentBtn"><i class="fas fa-plus"></i> Add Department</button>
+            </div>
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px;">
+                <!-- Cardiology -->
+                <div class="stat-card dept-card" data-dept="cardiology" style="position: relative; overflow: hidden;">
+                    <div style="position: absolute; top: 0; left: 0; width: 100%; height: 4px; background: linear-gradient(90deg, #dc3545, #e83e8c);"></div>
+                    <div style="display: flex; align-items: center; gap: 15px; margin-bottom: 15px;">
+                        <div style="width: 50px; height: 50px; background: rgba(220,53,69,0.1); color: #dc3545; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 1.3em;"><i class="fas fa-heartbeat"></i></div>
+                        <div>
+                            <h3 style="color: #333; font-size: 1.1em; font-weight: 600;">Cardiology</h3>
+                            <p style="color: #999; font-size: 0.8em;">Heart & Cardiovascular</p>
+                        </div>
+                    </div>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; font-size: 0.85em; color: #666;">
+                        <div><i class="fas fa-user-md"></i> Dr. Smith (Head)</div>
+                        <div><i class="fas fa-users"></i> 12 Staff</div>
+                        <div><i class="fas fa-bed"></i> 24 Beds</div>
+                        <div><i class="fas fa-phone"></i> Ext. 1001</div>
+                    </div>
+                    <div class="dept-card-actions">
+                        <button class="view-btn" onclick="viewDepartment('cardiology')"><i class="fas fa-eye"></i> View</button>
+                        <button class="edit-btn" onclick="editDepartment('cardiology')"><i class="fas fa-edit"></i> Edit</button>
+                    </div>
+                </div>
+                
+                <!-- Neurology -->
+                <div class="stat-card dept-card" data-dept="neurology" style="position: relative; overflow: hidden;">
+                    <div style="position: absolute; top: 0; left: 0; width: 100%; height: 4px; background: linear-gradient(90deg, #6f42c1, #e83e8c);"></div>
+                    <div style="display: flex; align-items: center; gap: 15px; margin-bottom: 15px;">
+                        <div style="width: 50px; height: 50px; background: rgba(111,66,193,0.1); color: #6f42c1; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 1.3em;"><i class="fas fa-brain"></i></div>
+                        <div>
+                            <h3 style="color: #333; font-size: 1.1em; font-weight: 600;">Neurology</h3>
+                            <p style="color: #999; font-size: 0.8em;">Brain & Nervous System</p>
+                        </div>
+                    </div>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; font-size: 0.85em; color: #666;">
+                        <div><i class="fas fa-user-md"></i> Dr. Johnson (Head)</div>
+                        <div><i class="fas fa-users"></i> 8 Staff</div>
+                        <div><i class="fas fa-bed"></i> 16 Beds</div>
+                        <div><i class="fas fa-phone"></i> Ext. 1002</div>
+                    </div>
+                    <div class="dept-card-actions">
+                        <button class="view-btn" onclick="viewDepartment('neurology')"><i class="fas fa-eye"></i> View</button>
+                        <button class="edit-btn" onclick="editDepartment('neurology')"><i class="fas fa-edit"></i> Edit</button>
+                    </div>
+                </div>
+                
+                <!-- Pediatrics -->
+                <div class="stat-card dept-card" data-dept="pediatrics" style="position: relative; overflow: hidden;">
+                    <div style="position: absolute; top: 0; left: 0; width: 100%; height: 4px; background: linear-gradient(90deg, #28a745, #20c997);"></div>
+                    <div style="display: flex; align-items: center; gap: 15px; margin-bottom: 15px;">
+                        <div style="width: 50px; height: 50px; background: rgba(40,167,69,0.1); color: #28a745; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 1.3em;"><i class="fas fa-baby-carriage"></i></div>
+                        <div>
+                            <h3 style="color: #333; font-size: 1.1em; font-weight: 600;">Pediatrics</h3>
+                            <p style="color: #999; font-size: 0.8em;">Child Healthcare</p>
+                        </div>
+                    </div>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; font-size: 0.85em; color: #666;">
+                        <div><i class="fas fa-user-md"></i> Dr. Williams (Head)</div>
+                        <div><i class="fas fa-users"></i> 15 Staff</div>
+                        <div><i class="fas fa-bed"></i> 32 Beds</div>
+                        <div><i class="fas fa-phone"></i> Ext. 1003</div>
+                    </div>
+                    <div class="dept-card-actions">
+                        <button class="view-btn" onclick="viewDepartment('pediatrics')"><i class="fas fa-eye"></i> View</button>
+                        <button class="edit-btn" onclick="editDepartment('pediatrics')"><i class="fas fa-edit"></i> Edit</button>
+                    </div>
+                </div>
+                
+                <!-- General Surgery -->
+                <div class="stat-card dept-card" data-dept="surgery" style="position: relative; overflow: hidden;">
+                    <div style="position: absolute; top: 0; left: 0; width: 100%; height: 4px; background: linear-gradient(90deg, #1e3c72, #2a5298);"></div>
+                    <div style="display: flex; align-items: center; gap: 15px; margin-bottom: 15px;">
+                        <div style="width: 50px; height: 50px; background: rgba(30,60,114,0.1); color: #1e3c72; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 1.3em;"><i class="fas fa-user-md"></i></div>
+                        <div>
+                            <h3 style="color: #333; font-size: 1.1em; font-weight: 600;">General Surgery</h3>
+                            <p style="color: #999; font-size: 0.8em;">Surgical Procedures</p>
+                        </div>
+                    </div>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; font-size: 0.85em; color: #666;">
+                        <div><i class="fas fa-user-md"></i> Dr. Davis (Head)</div>
+                        <div><i class="fas fa-users"></i> 10 Staff</div>
+                        <div><i class="fas fa-procedures"></i> 6 ORs</div>
+                        <div><i class="fas fa-phone"></i> Ext. 1004</div>
+                    </div>
+                    <div class="dept-card-actions">
+                        <button class="view-btn" onclick="viewDepartment('surgery')"><i class="fas fa-eye"></i> View</button>
+                        <button class="edit-btn" onclick="editDepartment('surgery')"><i class="fas fa-edit"></i> Edit</button>
+                    </div>
+                </div>
+                
+                <!-- Orthopedics -->
+                <div class="stat-card dept-card" data-dept="orthopedics" style="position: relative; overflow: hidden;">
+                    <div style="position: absolute; top: 0; left: 0; width: 100%; height: 4px; background: linear-gradient(90deg, #fd7e14, #ffc107);"></div>
+                    <div style="display: flex; align-items: center; gap: 15px; margin-bottom: 15px;">
+                        <div style="width: 50px; height: 50px; background: rgba(253,126,20,0.1); color: #fd7e14; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 1.3em;"><i class="fas fa-bone"></i></div>
+                        <div>
+                            <h3 style="color: #333; font-size: 1.1em; font-weight: 600;">Orthopedics</h3>
+                            <p style="color: #999; font-size: 0.8em;">Bone & Joint Care</p>
+                        </div>
+                    </div>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; font-size: 0.85em; color: #666;">
+                        <div><i class="fas fa-user-md"></i> Dr. Brown (Head)</div>
+                        <div><i class="fas fa-users"></i> 9 Staff</div>
+                        <div><i class="fas fa-bed"></i> 18 Beds</div>
+                        <div><i class="fas fa-phone"></i> Ext. 1005</div>
+                    </div>
+                    <div class="dept-card-actions">
+                        <button class="view-btn" onclick="viewDepartment('orthopedics')"><i class="fas fa-eye"></i> View</button>
+                        <button class="edit-btn" onclick="editDepartment('orthopedics')"><i class="fas fa-edit"></i> Edit</button>
+                    </div>
+                </div>
+                
+                <!-- Obstetrics -->
+                <div class="stat-card dept-card" data-dept="obstetrics" style="position: relative; overflow: hidden;">
+                    <div style="position: absolute; top: 0; left: 0; width: 100%; height: 4px; background: linear-gradient(90deg, #e83e8c, #fd7e14);"></div>
+                    <div style="display: flex; align-items: center; gap: 15px; margin-bottom: 15px;">
+                        <div style="width: 50px; height: 50px; background: rgba(232,62,140,0.1); color: #e83e8c; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 1.3em;"><i class="fas fa-baby"></i></div>
+                        <div>
+                            <h3 style="color: #333; font-size: 1.1em; font-weight: 600;">Obstetrics</h3>
+                            <p style="color: #999; font-size: 0.8em;">Maternity Care</p>
+                        </div>
+                    </div>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; font-size: 0.85em; color: #666;">
+                        <div><i class="fas fa-user-md"></i> Dr. Garcia (Head)</div>
+                        <div><i class="fas fa-users"></i> 11 Staff</div>
+                        <div><i class="fas fa-bed"></i> 20 Beds</div>
+                        <div><i class="fas fa-phone"></i> Ext. 1006</div>
+                    </div>
+                    <div class="dept-card-actions">
+                        <button class="view-btn" onclick="viewDepartment('obstetrics')"><i class="fas fa-eye"></i> View</button>
+                        <button class="edit-btn" onclick="editDepartment('obstetrics')"><i class="fas fa-edit"></i> Edit</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add Department Modal -->
+    <div id="departmentModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2><i class="fas fa-hospital"></i> Add New Department</h2>
+                <span class="close">&times;</span>
+            </div>
+            <form id="departmentForm">
+                <div class="form-group">
+                    <label for="deptName">Department Name</label>
+                    <input type="text" id="deptName" name="deptName" placeholder="e.g., Dermatology" required>
+                </div>
+                <div class="form-group">
+                    <label for="deptDescription">Description</label>
+                    <input type="text" id="deptDescription" name="deptDescription" placeholder="e.g., Skin & Cosmetic Care">
+                </div>
+                <div class="form-group">
+                    <label for="deptHead">Department Head</label>
+                    <input type="text" id="deptHead" name="deptHead" placeholder="e.g., Dr. John Smith">
+                </div>
+                <div class="form-group">
+                    <label for="deptStaff">Number of Staff</label>
+                    <input type="number" id="deptStaff" name="deptStaff" placeholder="e.g., 10" min="1">
+                </div>
+                <div class="form-group">
+                    <label for="deptBeds">Number of Beds</label>
+                    <input type="number" id="deptBeds" name="deptBeds" placeholder="e.g., 20" min="0">
+                </div>
+                <div class="form-group">
+                    <label for="deptPhone">Extension Number</label>
+                    <input type="text" id="deptPhone" name="deptPhone" placeholder="e.g., Ext. 1007">
+                </div>
+                <div class="form-actions">
+                    <button type="button" class="btn-secondary" id="cancelBtn">Cancel</button>
+                    <button type="submit" class="btn-primary"><i class="fas fa-save"></i> Add Department</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- View Department Modal -->
+    <div id="viewModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2><i class="fas fa-hospital"></i> Department Details</h2>
+                <span class="close">&times;</span>
+            </div>
+            <div id="viewDepartmentContent" style="padding: 22px 26px;">
+                <!-- Content will be populated by JavaScript -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Edit Department Modal -->
+    <div id="editModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2><i class="fas fa-edit"></i> Edit Department</h2>
+                <span class="close">&times;</span>
+            </div>
+            <form id="editDepartmentForm">
+                <input type="hidden" id="editDeptId">
+                <div class="form-group">
+                    <label for="editDeptName">Department Name</label>
+                    <input type="text" id="editDeptName" name="editDeptName" required>
+                </div>
+                <div class="form-group">
+                    <label for="editDeptDescription">Description</label>
+                    <input type="text" id="editDeptDescription" name="editDeptDescription">
+                </div>
+                <div class="form-group">
+                    <label for="editDeptHead">Department Head</label>
+                    <input type="text" id="editDeptHead" name="editDeptHead">
+                </div>
+                <div class="form-group">
+                    <label for="editDeptStaff">Number of Staff</label>
+                    <input type="number" id="editDeptStaff" name="editDeptStaff" min="1">
+                </div>
+                <div class="form-group">
+                    <label for="editDeptBeds">Number of Beds</label>
+                    <input type="number" id="editDeptBeds" name="editDeptBeds" min="0">
+                </div>
+                <div class="form-group">
+                    <label for="editDeptPhone">Extension Number</label>
+                    <input type="text" id="editDeptPhone" name="editDeptPhone">
+                </div>
+                <div class="form-actions">
+                    <button type="button" class="btn-secondary" id="cancelEditBtn">Cancel</button>
+                    <button type="submit" class="btn-primary"><i class="fas fa-save"></i> Save Changes</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // Department data
+        const departmentsData = {
+            'cardiology': {
+                name: 'Cardiology',
+                description: 'Heart & Cardiovascular',
+                icon: 'fa-heartbeat',
+                color: '#dc3545',
+                head: 'Dr. Smith',
+                staff: 12,
+                beds: 24,
+                phone: 'Ext. 1001'
+            },
+            'neurology': {
+                name: 'Neurology',
+                description: 'Brain & Nervous System',
+                icon: 'fa-brain',
+                color: '#6f42c1',
+                head: 'Dr. Johnson',
+                staff: 8,
+                beds: 16,
+                phone: 'Ext. 1002'
+            },
+            'pediatrics': {
+                name: 'Pediatrics',
+                description: 'Child Healthcare',
+                icon: 'fa-baby-carriage',
+                color: '#28a745',
+                head: 'Dr. Williams',
+                staff: 15,
+                beds: 32,
+                phone: 'Ext. 1003'
+            },
+            'surgery': {
+                name: 'General Surgery',
+                description: 'Surgical Procedures',
+                icon: 'fa-user-md',
+                color: '#1e3c72',
+                head: 'Dr. Davis',
+                staff: 10,
+                beds: 0,
+                phone: 'Ext. 1004',
+                ors: 6
+            },
+            'orthopedics': {
+                name: 'Orthopedics',
+                description: 'Bone & Joint Care',
+                icon: 'fa-bone',
+                color: '#fd7e14',
+                head: 'Dr. Brown',
+                staff: 9,
+                beds: 18,
+                phone: 'Ext. 1005'
+            },
+            'obstetrics': {
+                name: 'Obstetrics',
+                description: 'Maternity Care',
+                icon: 'fa-baby',
+                color: '#e83e8c',
+                head: 'Dr. Garcia',
+                staff: 11,
+                beds: 20,
+                phone: 'Ext. 1006'
+            }
+        };
+        
+        let deptCount = 6;
+        
+        // Modal functionality
+        const modal = document.getElementById("departmentModal");
+        const addDepartmentBtn = document.getElementById("addDepartmentBtn");
+        const closeBtn = document.getElementsByClassName("close")[0];
+        const cancelBtn = document.getElementById("cancelBtn");
+        const departmentForm = document.getElementById("departmentForm");
+        
+        // View Modal
+        const viewModal = document.getElementById("viewModal");
+        const viewDepartmentContent = document.getElementById("viewDepartmentContent");
+        
+        // Edit Modal
+        const editModal = document.getElementById("editModal");
+        const editDepartmentForm = document.getElementById("editDepartmentForm");
+        const cancelEditBtn = document.getElementById("cancelEditBtn");
+        
+        // Open add department modal
+        addDepartmentBtn.onclick = function() {
+            modal.style.display = "block";
+        }
+        
+        // Close modal with X button
+        closeBtn.onclick = function() {
+            modal.style.display = "none";
+            if (viewModal.style.display === "block") viewModal.style.display = "none";
+            if (editModal.style.display === "block") editModal.style.display = "none";
+        }
+        
+        // Close modal with Cancel button
+        cancelBtn.onclick = function() {
+            modal.style.display = "none";
+            departmentForm.reset();
+        }
+        
+        // Close edit modal
+        cancelEditBtn.onclick = function() {
+            editModal.style.display = "none";
+            editDepartmentForm.reset();
+        }
+        
+        // Close modal when clicking outside
+        window.onclick = function(event) {
+            if (event.target == modal) {
+                modal.style.display = "none";
+                departmentForm.reset();
+            }
+            if (event.target == viewModal) {
+                viewModal.style.display = "none";
+            }
+            if (event.target == editModal) {
+                editModal.style.display = "none";
+                editDepartmentForm.reset();
+            }
+        }
+        
+        // Handle add department form submission
+        departmentForm.onsubmit = function(e) {
+            e.preventDefault();
+            
+            const deptName = document.getElementById("deptName").value;
+            const deptDescription = document.getElementById("deptDescription").value;
+            const deptHead = document.getElementById("deptHead").value;
+            const deptStaff = document.getElementById("deptStaff").value;
+            const deptBeds = document.getElementById("deptBeds").value;
+            const deptPhone = document.getElementById("deptPhone").value;
+            
+            // Generate department ID
+            deptCount++;
+            const deptId = 'dept' + deptCount;
+            
+            // Add to data
+            departmentsData[deptId] = {
+                name: deptName,
+                description: deptDescription || 'Healthcare Services',
+                icon: 'fa-stethoscope',
+                color: '#3182ce',
+                head: deptHead || 'TBD',
+                staff: parseInt(deptStaff) || 0,
+                beds: parseInt(deptBeds) || 0,
+                phone: deptPhone || 'Ext. ' + (1000 + deptCount)
+            };
+            
+            // Add department card to page
+            const container = document.querySelector('.grid-container, div[style*="grid"]');
+            const gridDiv = document.querySelector('div[style*="display: grid"]');
+            
+            const newCard = document.createElement('div');
+            newCard.className = 'stat-card dept-card';
+            newCard.setAttribute('data-dept', deptId);
+            newCard.style.cssText = 'position: relative; overflow: hidden;';
+            newCard.innerHTML = `
+                <div style="position: absolute; top: 0; left: 0; width: 100%; height: 4px; background: linear-gradient(90deg, #3182ce, #2c5282);"></div>
+                <div style="display: flex; align-items: center; gap: 15px; margin-bottom: 15px;">
+                    <div style="width: 50px; height: 50px; background: rgba(49,130,206,0.1); color: #3182ce; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 1.3em;"><i class="fas fa-stethoscope"></i></div>
+                    <div>
+                        <h3 style="color: #333; font-size: 1.1em; font-weight: 600;">${deptName}</h3>
+                        <p style="color: #999; font-size: 0.8em;">${deptDescription || 'Healthcare Services'}</p>
+                    </div>
+                </div>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; font-size: 0.85em; color: #666;">
+                    <div><i class="fas fa-user-md"></i> ${deptHead || 'TBD'} (Head)</div>
+                    <div><i class="fas fa-users"></i> ${deptStaff || 0} Staff</div>
+                    <div><i class="fas fa-bed"></i> ${deptBeds || 0} Beds</div>
+                    <div><i class="fas fa-phone"></i> ${deptPhone || 'TBD'}</div>
+                </div>
+                <div class="dept-card-actions">
+                    <button class="view-btn" onclick="viewDepartment('${deptId}')"><i class="fas fa-eye"></i> View</button>
+                    <button class="edit-btn" onclick="editDepartment('${deptId}')"><i class="fas fa-edit"></i> Edit</button>
+                </div>
+            `;
+            
+            gridDiv.appendChild(newCard);
+            
+            // Close modal and reset form
+            modal.style.display = "none";
+            departmentForm.reset();
+            
+            alert("Department added successfully!");
+        }
+        
+        // View department details
+        function viewDepartment(deptId) {
+            const dept = departmentsData[deptId];
+            if (!dept) return;
+            
+            viewDepartmentContent.innerHTML = `
+                <div style="text-align: center;">
+                    <div class="dept-icon-large" style="background: rgba(${parseInt(dept.color.slice(1,3), 16)}, ${parseInt(dept.color.slice(3,5), 16)}, ${parseInt(dept.color.slice(5,7), 16)}, 0.1); color: ${dept.color};">
+                        <i class="fas ${dept.icon}"></i>
+                    </div>
+                    <h3 style="margin: 0 0 5px 0; font-size: 1.4rem; color: #2d3748;">${dept.name}</h3>
+                    <p style="margin: 0 0 20px 0; color: #718096;">${dept.description}</p>
+                </div>
+                <div class="dept-info-grid">
+                    <div class="dept-info-item">
+                        <i class="fas fa-user-md"></i>
+                        <div>Department Head</div>
+                        <span>${dept.head}</span>
+                    </div>
+                    <div class="dept-info-item">
+                        <i class="fas fa-users"></i>
+                        <div>Staff Members</div>
+                        <span>${dept.staff}</span>
+                    </div>
+                    <div class="dept-info-item">
+                        <i class="fas fa-bed"></i>
+                        <div>Total Beds</div>
+                        <span>${dept.beds}</span>
+                    </div>
+                    <div class="dept-info-item">
+                        <i class="fas fa-phone"></i>
+                        <div>Extension</div>
+                        <span>${dept.phone}</span>
+                    </div>
+                </div>
+            `;
+            
+            viewModal.style.display = "block";
+        }
+        
+        // Edit department
+        function editDepartment(deptId) {
+            const dept = departmentsData[deptId];
+            if (!dept) return;
+            
+            document.getElementById("editDeptId").value = deptId;
+            document.getElementById("editDeptName").value = dept.name;
+            document.getElementById("editDeptDescription").value = dept.description;
+            document.getElementById("editDeptHead").value = dept.head;
+            document.getElementById("editDeptStaff").value = dept.staff;
+            document.getElementById("editDeptBeds").value = dept.beds;
+            document.getElementById("editDeptPhone").value = dept.phone;
+            
+            editModal.style.display = "block";
+        }
+        
+        // Handle edit form submission
+        editDepartmentForm.onsubmit = function(e) {
+            e.preventDefault();
+            
+            const deptId = document.getElementById("editDeptId").value;
+            const dept = departmentsData[deptId];
+            if (!dept) return;
+            
+            // Update data
+            dept.name = document.getElementById("editDeptName").value;
+            dept.description = document.getElementById("editDeptDescription").value;
+            dept.head = document.getElementById("editDeptHead").value;
+            dept.staff = parseInt(document.getElementById("editDeptStaff").value) || 0;
+            dept.beds = parseInt(document.getElementById("editDeptBeds").value) || 0;
+            dept.phone = document.getElementById("editDeptPhone").value;
+            
+            // Update card on page
+            const card = document.querySelector(`[data-dept="${deptId}"]`);
+            if (card) {
+                card.querySelector('h3').textContent = dept.name;
+                card.querySelector('p').textContent = dept.description;
+                
+                const infoDiv = card.querySelector('div[style*="grid"]');
+                infoDiv.innerHTML = `
+                    <div><i class="fas fa-user-md"></i> ${dept.head} (Head)</div>
+                    <div><i class="fas fa-users"></i> ${dept.staff} Staff</div>
+                    <div><i class="fas fa-bed"></i> ${dept.beds} Beds</div>
+                    <div><i class="fas fa-phone"></i> ${dept.phone}</div>
+                `;
+            }
+            
+            // Close modal
+            editModal.style.display = "none";
+            editDepartmentForm.reset();
+            
+            alert("Department updated successfully!");
+        }
+    </script>
+</body>
+<script>
+function searchDepartments() {
+    const searchInput = document.getElementById('departmentSearch').value.toLowerCase();
+    const table = document.querySelector('.data-table');
+    const rows = table.getElementsByTagName('tbody')[0].getElementsByTagName('tr');
+    
+    for (let i = 0; i < rows.length; i++) {
+        const row = rows[i];
+        const cells = row.getElementsByTagName('td');
+        let found = false;
+        
+        for (let j = 0; j < cells.length; j++) {
+            const cellText = cells[j].textContent || cells[j].innerText;
+            if (cellText.toLowerCase().indexOf(searchInput) > -1) {
+                found = true;
+                break;
+            }
+        }
+        
+        if (found) {
+            row.style.display = '';
+        } else {
+            row.style.display = 'none';
+        }
+    }
+}
+
+window.onload = function() {
+    const savedPhoto = localStorage.getItem('profilePhoto');
+    if (savedPhoto) {
+        const dashboardAvatar = document.getElementById('dashboard-avatar');
+        if (dashboardAvatar) {
+            dashboardAvatar.innerHTML = '<img src="' + savedPhoto + '" style="width: 100%; height: 100%; object-fit: cover; border-radius: 50%;">';
+        }
+    }
+    const savedSettings = localStorage.getItem('userSettings');
+    if (savedSettings) {
+        const settings = JSON.parse(savedSettings);
+        const fullName = settings.firstName + ' ' + settings.lastName;
+        const usernameEl = document.getElementById('dashboard-username');
+        if (usernameEl) usernameEl.textContent = fullName;
+    }
+};
+</script>
+</html>

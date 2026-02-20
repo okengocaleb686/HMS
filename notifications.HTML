@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Notification Settings - Hospital Management System</title>
+    <link rel="stylesheet" href="STYLE.CSS">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div class="dashboard-container">
+        <div class="sidebar">
+            <div class="sidebar-header">
+                <img src="IMAGES/HMS.jpg" alt="HMS Logo">
+                <p>Hospital Management</p>
+            </div>
+            <ul class="sidebar-menu">
+                <li><a href="DASHBOARD.HTML"><i class="fas fa-tachometer-alt"></i> <span>Dashboard</span></a></li>
+                <li><a href="patients.HTML"><i class="fas fa-user-injured"></i> <span>Patients</span></a></li>
+                <li><a href="doctors.HTML"><i class="fas fa-user-md"></i> <span>Doctors</span></a></li>
+                <li><a href="appointments.HTML"><i class="fas fa-calendar-check"></i> <span>Appointments</span></a></li>
+                <li><a href="departments.HTML"><i class="fas fa-hospital"></i> <span>Departments</span></a></li>
+                <li><a href="billing.HTML"><i class="fas fa-file-invoice-dollar"></i> <span>Billing</span></a></li>
+                <li><a href="reports.HTML"><i class="fas fa-chart-line"></i> <span>Reports</span></a></li>
+                <li class="active"><a href="settings.HTML"><i class="fas fa-cog"></i> <span>Settings</span></a></li>
+                <li><a href="LOGOUT.HTML"><i class="fas fa-sign-out-alt"></i> <span>Logout</span></a></li>
+            </ul>
+        </div>
+        <div class="main-content">
+            <div class="header">
+                <h1><i class="fas fa-bell"></i> Notification Settings</h1>
+                <div class="user-info">
+                    <div id="dashboard-avatar" class="avatar"><i class="fas fa-user"></i></div>
+                    <span id="dashboard-username">Admin User</span>
+                </div>
+            </div>
+            <div style="display: grid; grid-template-columns: 220px 1fr; gap: 20px;">
+                <div style="background: white; border-radius: 12px; padding: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.08); height: fit-content;">
+                    <div style="padding: 12px; color: #666; border-radius: 8px; display: flex; align-items: center; gap: 10px; font-size: 0.9em; cursor: pointer;" onclick="window.location.href='settings.HTML'"><i class="fas fa-user"></i> Profile</div>
+                    <div style="padding: 12px; color: #666; border-radius: 8px; display: flex; align-items: center; gap: 10px; font-size: 0.9em; cursor: pointer;" onclick="window.location.href='hospital.HTML'"><i class="fas fa-hospital"></i> Hospital</div>
+                    <div style="padding: 12px; background: var(--primary-gradient); color: white; border-radius: 8px; margin-bottom: 10px; display: flex; align-items: center; gap: 10px; font-size: 0.9em;"><i class="fas fa-bell"></i> Notifications</div>
+                    <div style="padding: 12px; color: #666; border-radius: 8px; display: flex; align-items: center; gap: 10px; font-size: 0.9em; cursor: pointer;" onclick="window.location.href='preferences.HTML'"><i class="fas fa-globe"></i> Preferences</div>
+                    <div style="padding: 12px; color: #666; border-radius: 8px; display: flex; align-items: center; gap: 10px; font-size: 0.9em; cursor: pointer;" onclick="window.location.href='security.HTML'"><i class="fas fa-shield-alt"></i> Security</div>
+                </div>
+                <div style="background: white; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.08); overflow: hidden;">
+                    <div style="padding: 20px; border-bottom: 1px solid #f0f0f0;">
+                        <h2 style="color: #333; font-size: 1.2em;">Notification Preferences</h2>
+                        <p style="color: #999; font-size: 0.85em;">Manage how you receive notifications</p>
+                    </div>
+                    <div style="padding: 20px;">
+                        <div style="display: flex; flex-direction: column; gap: 15px;">
+                            <div style="display: flex; justify-content: space-between; align-items: center; padding: 15px; background: #f8f9fa; border-radius: 8px;">
+                                <div>
+                                    <h3 style="color: #333; font-size: 1em; margin-bottom: 5px;">Email Notifications</h3>
+                                    <p style="color: #666; font-size: 0.85em;">Receive updates via email</p>
+                                </div>
+                                <label style="position: relative; display: inline-block; width: 50px; height: 26px;">
+                                    <input type="checkbox" id="emailNotif" checked style="opacity: 0; width: 0; height: 0;">
+                                    <span style="position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #ccc; transition: .4s; border-radius: 34px;"></span>
+                                </label>
+                            </div>
+                            <div style="display: flex; justify-content: space-between; align-items: center; padding: 15px; background: #f8f9fa; border-radius: 8px;">
+                                <div>
+                                    <h3 style="color: #333; font-size: 1em; margin-bottom: 5px;">SMS Notifications</h3>
+                                    <p style="color: #666; font-size: 0.85em;">Receive updates via SMS</p>
+                                </div>
+                                <label style="position: relative; display: inline-block; width: 50px; height: 26px;">
+                                    <input type="checkbox" id="smsNotif" checked style="opacity: 0; width: 0; height: 0;">
+                                    <span style="position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #ccc; transition: .4s; border-radius: 34px;"></span>
+                                </label>
+                            </div>
+                            <div style="display: flex; justify-content: space-between; align-items: center; padding: 15px; background: #f8f9fa; border-radius: 8px;">
+                                <div>
+                                    <h3 style="color: #333; font-size: 1em; margin-bottom: 5px;">Appointment Reminders</h3>
+                                    <p style="color: #666; font-size: 0.85em;">Get reminded about upcoming appointments</p>
+                                </div>
+                                <label style="position: relative; display: inline-block; width: 50px; height: 26px;">
+                                    <input type="checkbox" id="appointmentNotif" checked style="opacity: 0; width: 0; height: 0;">
+                                    <span style="position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #ccc; transition: .4s; border-radius: 34px;"></span>
+                                </label>
+                            </div>
+                            <div style="display: flex; justify-content: space-between; align-items: center; padding: 15px; background: #f8f9fa; border-radius: 8px;">
+                                <div>
+                                    <h3 style="color: #333; font-size: 1em; margin-bottom: 5px;">Patient Alerts</h3>
+                                    <p style="color: #666; font-size: 0.85em;">Alerts for new patient registrations</p>
+                                </div>
+                                <label style="position: relative; display: inline-block; width: 50px; height: 26px;">
+                                    <input type="checkbox" id="patientNotif" checked style="opacity: 0; width: 0; height: 0;">
+                                    <span style="position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #ccc; transition: .4s; border-radius: 34px;"></span>
+                                </label>
+                            </div>
+                            <div style="display: flex; justify-content: space-between; align-items: center; padding: 15px; background: #f8f9fa; border-radius: 8px;">
+                                <div>
+                                    <h3 style="color: #333; font-size: 1em; margin-bottom: 5px;">Billing Alerts</h3>
+                                    <p style="color: #666; font-size: 0.85em;">Notifications for billing activities</p>
+                                </div>
+                                <label style="position: relative; display: inline-block; width: 50px; height: 26px;">
+                                    <input type="checkbox" id="billingNotif" checked style="opacity: 0; width: 0; height: 0;">
+                                    <span style="position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #ccc; transition: .4s; border-radius: 34px;"></span>
+                                </label>
+                            </div>
+                            <div style="display: flex; justify-content: space-between; align-items: center; padding: 15px; background: #f8f9fa; border-radius: 8px;">
+                                <div>
+                                    <h3 style="color: #333; font-size: 1em; margin-bottom: 5px;">System Updates</h3>
+                                    <p style="color: #666; font-size: 0.85em;">Notifications about system maintenance</p>
+                                </div>
+                                <label style="position: relative; display: inline-block; width: 50px; height: 26px;">
+                                    <input type="checkbox" id="systemNotif" style="opacity: 0; width: 0; height: 0;">
+                                    <span style="position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #ccc; transition: .4s; border-radius: 34px;"></span>
+                                </label>
+                            </div>
+                        </div>
+                        <div style="margin-top: 20px; padding-top: 20px; border-top: 1px solid #f0f0f0; display: flex; justify-content: flex-end; gap: 10px;">
+                            <button class="btn-cancel" style="padding: 10px 20px; border: 2px solid #e0e0e0; background: white; border-radius: 8px; cursor: pointer; font-size: 0.9em;" onclick="cancelNotifications()">Cancel</button>
+                            <button class="btn-primary" onclick="saveNotifications()"><i class="fas fa-save"></i> Save Changes</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+<script>
+window.onload = function() {
+    const savedPhoto = localStorage.getItem('profilePhoto');
+    if (savedPhoto) {
+        const dashboardAvatar = document.getElementById('dashboard-avatar');
+        if (dashboardAvatar) {
+            dashboardAvatar.innerHTML = '<img src="' + savedPhoto + '" style="width: 100%; height: 100%; object-fit: cover; border-radius: 50%;">';
+        }
+    }
+    const savedSettings = localStorage.getItem('userSettings');
+    if (savedSettings) {
+        const settings = JSON.parse(savedSettings);
+        const fullName = settings.firstName + ' ' + settings.lastName;
+        const usernameEl = document.getElementById('dashboard-username');
+        if (usernameEl) usernameEl.textContent = fullName;
+    }
+    const savedNotif = localStorage.getItem('notificationSettings');
+    if (savedNotif) {
+        const notif = JSON.parse(savedNotif);
+        document.getElementById('emailNotif').checked = notif.emailNotif;
+        document.getElementById('smsNotif').checked = notif.smsNotif;
+        document.getElementById('appointmentNotif').checked = notif.appointmentNotif;
+        document.getElementById('patientNotif').checked = notif.patientNotif;
+        document.getElementById('billingNotif').checked = notif.billingNotif;
+        document.getElementById('systemNotif').checked = notif.systemNotif;
+    }
+};
+
+function saveNotifications() {
+    const notif = {
+        emailNotif: document.getElementById('emailNotif').checked,
+        smsNotif: document.getElementById('smsNotif').checked,
+        appointmentNotif: document.getElementById('appointmentNotif').checked,
+        patientNotif: document.getElementById('patientNotif').checked,
+        billingNotif: document.getElementById('billingNotif').checked,
+        systemNotif: document.getElementById('systemNotif').checked
+    };
+    localStorage.setItem('notificationSettings', JSON.stringify(notif));
+    alert('Notification settings saved successfully!');
+}
+
+function cancelNotifications() {
+    const savedNotif = localStorage.getItem('notificationSettings');
+    if (savedNotif) {
+        const notif = JSON.parse(savedNotif);
+        document.getElementById('emailNotif').checked = notif.emailNotif;
+        document.getElementById('smsNotif').checked = notif.smsNotif;
+        document.getElementById('appointmentNotif').checked = notif.appointmentNotif;
+        document.getElementById('patientNotif').checked = notif.patientNotif;
+        document.getElementById('billingNotif').checked = notif.billingNotif;
+        document.getElementById('systemNotif').checked = notif.systemNotif;
+    }
+    alert('Changes cancelled');
+}
+</script>
+</html>

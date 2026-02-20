@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Patient Demographics Report - Hospital Management System</title>
+    <link rel="stylesheet" href="STYLE.CSS">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div class="dashboard-container">
+        <div class="sidebar">
+            <div class="sidebar-header">
+                <img src="IMAGES/HMS.jpg" alt="HMS Logo">
+                <p>Hospital Management</p>
+            </div>
+            <ul class="sidebar-menu">
+                <li><a href="DASHBOARD.HTML"><i class="fas fa-tachometer-alt"></i> <span>Dashboard</span></a></li>
+                <li><a href="patients.HTML"><i class="fas fa-user-injured"></i> <span>Patients</span></a></li>
+                <li><a href="doctors.HTML"><i class="fas fa-user-md"></i> <span>Doctors</span></a></li>
+                <li><a href="appointments.HTML"><i class="fas fa-calendar-check"></i> <span>Appointments</span></a></li>
+                <li><a href="departments.HTML"><i class="fas fa-hospital"></i> <span>Departments</span></a></li>
+                <li><a href="billing.HTML"><i class="fas fa-file-invoice-dollar"></i> <span>Billing</span></a></li>
+                <li class="active"><a href="reports.HTML"><i class="fas fa-chart-line"></i> <span>Reports</span></a></li>
+                <li><a href="settings.HTML"><i class="fas fa-cog"></i> <span>Settings</span></a></li>
+                <li><a href="LOGOUT.HTML"><i class="fas fa-sign-out-alt"></i> <span>Logout</span></a></li>
+            </ul>
+        </div>
+        <div class="main-content">
+            <div class="header">
+                <h1><i class="fas fa-users"></i> Patient Demographics Report</h1>
+                <div class="user-info">
+                    <div id="dashboard-avatar" class="avatar"><i class="fas fa-user"></i></div>
+                    <span id="dashboard-username">Admin User</span>
+                </div>
+            </div>
+            
+            <div style="display: grid; grid-template-columns: 220px 1fr; gap: 20px;">
+                <div style="background: white; border-radius: 12px; padding: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.08); height: fit-content;">
+                    <div style="padding: 12px; background: var(--primary-gradient); color: white; border-radius: 8px; margin-bottom: 10px; display: flex; align-items: center; gap: 10px; font-size: 0.9em;"><i class="fas fa-chart-bar"></i> Available Reports</div>
+                    <div style="padding: 12px; color: #666; border-radius: 8px; display: flex; align-items: center; gap: 10px; font-size: 0.9em; cursor: pointer;" onclick="window.location.href='reports.HTML'"><i class="fas fa-list"></i> Overview</div>
+                    <div style="padding: 12px; background: var(--primary-gradient); color: white; border-radius: 8px; margin-bottom: 10px; display: flex; align-items: center; gap: 10px; font-size: 0.9em;"><i class="fas fa-users"></i> Patients</div>
+                    <div style="padding: 12px; color: #666; border-radius: 8px; display: flex; align-items: center; gap: 10px; font-size: 0.9em; cursor: pointer;" onclick="window.location.href='reports_appointments.HTML'"><i class="fas fa-calendar"></i> Appointments</div>
+                    <div style="padding: 12px; color: #666; border-radius: 8px; display: flex; align-items: center; gap: 10px; font-size: 0.9em; cursor: pointer;" onclick="window.location.href='reports_financial.HTML'"><i class="fas fa-dollar-sign"></i> Financial</div>
+                    <div style="padding: 12px; color: #666; border-radius: 8px; display: flex; align-items: center; gap: 10px; font-size: 0.9em; cursor: pointer;" onclick="window.location.href='reports_doctors.HTML'"><i class="fas fa-user-md"></i> Doctors</div>
+                </div>
+                
+                <div style="display: flex; flex-direction: column; gap: 20px;">
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px;">
+                        <div class="stat-card" style="position: relative; overflow: hidden;">
+                            <div style="position: absolute; top: 0; left: 0; width: 4px; height: 100%; background: var(--primary-dark);"></div>
+                            <div class="icon" style="background: rgba(30,60,114,0.1); color: var(--primary-dark);"><i class="fas fa-users"></i></div>
+                            <div class="value">1,248</div>
+                            <div class="label">Total Patients</div>
+                        </div>
+                        <div class="stat-card" style="position: relative; overflow: hidden;">
+                            <div style="position: absolute; top: 0; left: 0; width: 4px; height: 100%; background: #28a745;"></div>
+                            <div class="icon" style="background: rgba(40,167,69,0.1); color: #28a745;"><i class="fas fa-user-plus"></i></div>
+                            <div class="value">156</div>
+                            <div class="label">New This Month</div>
+                        </div>
+                        <div class="stat-card" style="position: relative; overflow: hidden;">
+                            <div style="position: absolute; top: 0; left: 0; width: 4px; height: 100%; background: #ff9800;"></div>
+                            <div class="icon" style="background: rgba(255,152,0,0.1); color: #ff9800;"><i class="fas fa-venus-mars"></i></div>
+                            <div class="value">48%</div>
+                            <div class="label">Male</div>
+                        </div>
+                        <div class="stat-card" style="position: relative; overflow: hidden;">
+                            <div style="position: absolute; top: 0; left: 0; width: 4px; height: 100%; background: #dc3545;"></div>
+                            <div class="icon" style="background: rgba(220,53,69,0.1); color: #dc3545;"><i class="fas fa-venus"></i></div>
+                            <div class="value">52%</div>
+                            <div class="label">Female</div>
+                        </div>
+                    </div>
+                    
+                    <div style="background: white; border-radius: 12px; padding: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.08);">
+                        <h3 style="color: var(--primary-dark); margin-bottom: 15px;">Age Distribution</h3>
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>Age Group</th>
+                                    <th>Male</th>
+                                    <th>Female</th>
+                                    <th>Total</th>
+                                    <th>Percentage</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>0-17</td>
+                                    <td>145</td>
+                                    <td>132</td>
+                                    <td>277</td>
+                                    <td>22.2%</td>
+                                </tr>
+                                <tr>
+                                    <td>18-35</td>
+                                    <td>198</td>
+                                    <td>215</td>
+                                    <td>413</td>
+                                    <td>33.1%</td>
+                                </tr>
+                                <tr>
+                                    <td>36-50</td>
+                                    <td>156</td>
+                                    <td>172</td>
+                                    <td>328</td>
+                                    <td>26.3%</td>
+                                </tr>
+                                <tr>
+                                    <td>51-65</td>
+                                    <td>78</td>
+                                    <td>89</td>
+                                    <td>167</td>
+                                    <td>13.4%</td>
+                                </tr>
+                                <tr>
+                                    <td>65+</td>
+                                    <td>21</td>
+                                    <td>42</td>
+                                    <td>63</td>
+                                    <td>5.0%</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    
+                    <div style="background: white; border-radius: 12px; padding: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.08);">
+                        <h3 style="color: var(--primary-dark); margin-bottom: 15px;">Top Departments by Patient Count</h3>
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>Department</th>
+                                    <th>Patients</th>
+                                    <th>Percentage</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>General Medicine</td>
+                                    <td>412</td>
+                                    <td>33.0%</td>
+                                </tr>
+                                <tr>
+                                    <td>Cardiology</td>
+                                    <td>286</td>
+                                    <td>22.9%</td>
+                                </tr>
+                                <tr>
+                                    <td>Orthopedics</td>
+                                    <td>198</td>
+                                    <td>15.9%</td>
+                                </tr>
+                                <tr>
+                                    <td>Pediatrics</td>
+                                    <td>187</td>
+                                    <td>15.0%</td>
+                                </tr>
+                                <tr>
+                                    <td>Neurology</td>
+                                    <td>165</td>
+                                    <td>13.2%</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+<script>
+window.onload = function() {
+    const savedPhoto = localStorage.getItem('profilePhoto');
+    if (savedPhoto) {
+        const dashboardAvatar = document.getElementById('dashboard-avatar');
+        if (dashboardAvatar) {
+            dashboardAvatar.innerHTML = '<img src="' + savedPhoto + '" style="width: 100%; height: 100%; object-fit: cover; border-radius: 50%;">';
+        }
+    }
+    const savedSettings = localStorage.getItem('userSettings');
+    if (savedSettings) {
+        const settings = JSON.parse(savedSettings);
+        const fullName = settings.firstName + ' ' + settings.lastName;
+        const usernameEl = document.getElementById('dashboard-username');
+        if (usernameEl) usernameEl.textContent = fullName;
+    }
+};
+</script>
+</html>

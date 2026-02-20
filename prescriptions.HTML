@@ -1,0 +1,438 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Prescriptions - Patient Dashboard</title>
+    <link rel="stylesheet" href="STYLE.CSS">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .prescription-full-card {
+            background: white;
+            border-radius: 12px;
+            padding: 25px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+            margin-bottom: 25px;
+        }
+        
+        .prescription-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            padding-bottom: 20px;
+            border-bottom: 1px solid #f0f0f0;
+            margin-bottom: 20px;
+        }
+        
+        .prescription-title {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .prescription-icon {
+            width: 50px;
+            height: 50px;
+            background: var(--primary-gradient);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.3rem;
+        }
+        
+        .prescription-title h3 {
+            margin: 0 0 5px 0;
+            color: #333;
+            font-size: 1.2rem;
+        }
+        
+        .prescription-title p {
+            margin: 0;
+            font-size: 0.85rem;
+            color: #666;
+        }
+        
+        .prescription-meta {
+            text-align: right;
+        }
+        
+        .prescription-date {
+            font-size: 0.9rem;
+            color: #666;
+            margin-bottom: 5px;
+        }
+        
+        .prescription-doctor {
+            font-weight: 600;
+            color: var(--primary-dark);
+        }
+        
+        .medication-list {
+            margin-bottom: 20px;
+        }
+        
+        .medication-row {
+            display: flex;
+            align-items: center;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 10px;
+            margin-bottom: 12px;
+            border-left: 4px solid var(--primary-dark);
+        }
+        
+        .medication-number {
+            width: 30px;
+            height: 30px;
+            background: var(--primary-dark);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            font-size: 0.85rem;
+            margin-right: 15px;
+        }
+        
+        .medication-info {
+            flex: 1;
+        }
+        
+        .medication-name {
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 4px;
+        }
+        
+        .medication-dosage {
+            font-size: 0.85rem;
+            color: #666;
+        }
+        
+        .medication-instructions {
+            text-align: right;
+        }
+        
+        .dosage-frequency {
+            background: rgba(40, 167, 69, 0.1);
+            color: #28a745;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+        
+        .prescription-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-top: 20px;
+            border-top: 1px solid #f0f0f0;
+        }
+        
+        .refill-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 0.9rem;
+            color: #666;
+        }
+        
+        .refill-info.urgent {
+            color: #dc3545;
+        }
+        
+        .prescription-actions {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .filter-tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 25px;
+            flex-wrap: wrap;
+        }
+        
+        .filter-tab {
+            padding: 10px 20px;
+            background: white;
+            border: 2px solid #e0e0e0;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            font-weight: 500;
+            color: #666;
+            transition: all 0.3s;
+        }
+        
+        .filter-tab:hover {
+            border-color: var(--primary-dark);
+            color: var(--primary-dark);
+        }
+        
+        .filter-tab.active {
+            background: var(--primary-gradient);
+            border-color: var(--primary-dark);
+            color: white;
+        }
+        
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+        }
+        
+        .empty-state-icon {
+            width: 80px;
+            height: 80px;
+            background: #f8f9fa;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            color: #ccc;
+            margin: 0 auto 20px;
+        }
+        
+        .empty-state h3 {
+            margin: 0 0 10px 0;
+            color: #333;
+        }
+        
+        .empty-state p {
+            margin: 0;
+            color: #666;
+            font-size: 0.9rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="dashboard-container">
+        <div class="sidebar">
+            <div class="sidebar-header">
+                <img src="IMAGES/HMS.jpg" alt="HMS Logo">
+                <p>Hospital Management</p>
+            </div>
+            <ul class="sidebar-menu">
+                <li><a href="patient_dashboard.HTML"><i class="fas fa-tachometer-alt"></i> <span>Dashboard</span></a></li>
+                <li><a href="appointments.HTML"><i class="fas fa-calendar-check"></i> <span>Appointments</span></a></li>
+                <li><a href="patients.HTML"><i class="fas fa-user-injured"></i> <span>Medical Records</span></a></li>
+                <li><a href="billing.HTML"><i class="fas fa-file-invoice-dollar"></i> <span>Billing</span></a></li>
+                <li class="active"><a href="prescriptions.HTML"><i class="fas fa-prescription"></i> <span>Prescriptions</span></a></li>
+                <li><a href="messages.HTML"><i class="fas fa-envelope"></i> <span>Messages</span></a></li>
+                <li><a href="settings.HTML"><i class="fas fa-cog"></i> <span>Settings</span></a></li>
+                <li><a href="LOGOUT.HTML"><i class="fas fa-sign-out-alt"></i> <span>Logout</span></a></li>
+            </ul>
+        </div>
+        <div class="main-content">
+            <div class="header">
+                <h1><i class="fas fa-prescription"></i> My Prescriptions</h1>
+                <div class="user-info">
+                    <div id="dashboard-avatar" class="avatar"><i class="fas fa-user"></i></div>
+                    <span id="dashboard-username">John Doe</span>
+                </div>
+            </div>
+            
+            <!-- Filter Tabs -->
+            <div class="filter-tabs">
+                <button class="filter-tab active">All Prescriptions</button>
+                <button class="filter-tab">Active</button>
+                <button class="filter-tab">Completed</button>
+                <button class="filter-tab">Refill Needed</button>
+            </div>
+            
+            <!-- Active Prescriptions -->
+            <h3 style="color: var(--primary-dark); margin-bottom: 15px; display: flex; align-items: center; gap: 10px;">
+                <i class="fas fa-file-medical-alt"></i> Active Prescriptions
+            </h3>
+            
+            <!-- Prescription Card 1 -->
+            <div class="prescription-full-card">
+                <div class="prescription-header">
+                    <div class="prescription-title">
+                        <div class="prescription-icon"><i class="fas fa-prescription"></i></div>
+                        <div>
+                            <h3>Prescription #RX-2026-0142</h3>
+                            <p>Heart Center - Cardiology Department</p>
+                        </div>
+                    </div>
+                    <div class="prescription-meta">
+                        <div class="prescription-date"><i class="fas fa-calendar"></i> Feb 14, 2026</div>
+                        <div class="prescription-doctor">Dr. John Smith</div>
+                    </div>
+                </div>
+                
+                <div class="medication-list">
+                    <div class="medication-row">
+                        <div class="medication-number">1</div>
+                        <div class="medication-info">
+                            <div class="medication-name">Metoprolol Succinate 50mg</div>
+                            <div class="medication-dosage">Extended-release tablet | 30 tablets</div>
+                        </div>
+                        <div class="medication-instructions">
+                            <span class="dosage-frequency">1 tablet daily</span>
+                        </div>
+                    </div>
+                    
+                    <div class="medication-row">
+                        <div class="medication-number">2</div>
+                        <div class="medication-info">
+                            <div class="medication-name">Aspirin 81mg</div>
+                            <div class="medication-dosage">Enteric-coated tablet | 30 tablets</div>
+                        </div>
+                        <div class="medication-instructions">
+                            <span class="dosage-frequency">1 tablet daily</span>
+                        </div>
+                    </div>
+                    
+                    <div class="medication-row">
+                        <div class="medication-number">3</div>
+                        <div class="medication-info">
+                            <div class="medication-name">Atorvastatin 20mg</div>
+                            <div class="medication-dosage">Film-coated tablet | 30 tablets</div>
+                        </div>
+                        <div class="medication-instructions">
+                            <span class="dosage-frequency">1 tablet at night</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="prescription-footer">
+                    <div class="refill-info">
+                        <i class="fas fa-sync-alt"></i> Refills remaining: <strong>2</strong>
+                    </div>
+                    <div class="prescription-actions">
+                        <button class="btn-secondary"><i class="fas fa-print"></i> Print</button>
+                        <button class="btn-primary"><i class="fas fa-sync"></i> Request Refill</button>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Prescription Card 2 -->
+            <div class="prescription-full-card">
+                <div class="prescription-header">
+                    <div class="prescription-title">
+                        <div class="prescription-icon"><i class="fas fa-prescription"></i></div>
+                        <div>
+                            <h3>Prescription #RX-2026-0098</h3>
+                            <p>General Medicine Department</p>
+                        </div>
+                    </div>
+                    <div class="prescription-meta">
+                        <div class="prescription-date"><i class="fas fa-calendar"></i> Jan 28, 2026</div>
+                        <div class="prescription-doctor">Dr. Sarah Johnson</div>
+                    </div>
+                </div>
+                
+                <div class="medication-list">
+                    <div class="medication-row">
+                        <div class="medication-number">1</div>
+                        <div class="medication-info">
+                            <div class="medication-name">Vitamin D3 1000IU</div>
+                            <div class="medication-dosage">Softgel capsule | 60 capsules</div>
+                        </div>
+                        <div class="medication-instructions">
+                            <span class="dosage-frequency">1 capsule daily</span>
+                        </div>
+                    </div>
+                    
+                    <div class="medication-row">
+                        <div class="medication-number">2</div>
+                        <div class="medication-info">
+                            <div class="medication-name">Centrum Multivitamin</div>
+                            <div class="medication-dosage">Tablet | 30 tablets</div>
+                        </div>
+                        <div class="medication-instructions">
+                            <span class="dosage-frequency">1 tablet daily</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="prescription-footer">
+                    <div class="refill-info urgent">
+                        <i class="fas fa-exclamation-triangle"></i> Refills remaining: <strong>0</strong> - Needs renewal
+                    </div>
+                    <div class="prescription-actions">
+                        <button class="btn-secondary"><i class="fas fa-print"></i> Print</button>
+                        <button class="btn-primary"><i class="fas fa-user-md"></i> Request Renewal</button>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Past Prescriptions -->
+            <h3 style="color: #666; margin: 30px 0 15px 0; display: flex; align-items: center; gap: 10px;">
+                <i class="fas fa-history"></i> Past Prescriptions
+            </h3>
+            
+            <div class="prescription-full-card" style="opacity: 0.8;">
+                <div class="prescription-header">
+                    <div class="prescription-title">
+                        <div class="prescription-icon" style="background: linear-gradient(135deg, #6c757d 0%, #495057 100%);"><i class="fas fa-prescription"></i></div>
+                        <div>
+                            <h3>Prescription #RX-2025-0892</h3>
+                            <p>Dermatology Department</p>
+                        </div>
+                    </div>
+                    <div class="prescription-meta">
+                        <div class="prescription-date"><i class="fas fa-calendar"></i> Dec 10, 2025</div>
+                        <div class="prescription-doctor">Dr. Emily Lee</div>
+                    </div>
+                </div>
+                
+                <div class="medication-list">
+                    <div class="medication-row" style="border-left-color: #6c757d;">
+                        <div class="medication-number" style="background: #6c757d;">1</div>
+                        <div class="medication-info">
+                            <div class="medication-name">Hydrocortisone Cream 1%</div>
+                            <div class="medication-dosage">Topical cream | 30g tube</div>
+                        </div>
+                        <div class="medication-instructions">
+                            <span class="dosage-frequency" style="background: rgba(108,117,125,0.1); color: #6c757d;">Apply twice daily</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="prescription-footer">
+                    <div class="refill-info">
+                        <i class="fas fa-check-circle"></i> Completed
+                    </div>
+                    <div class="prescription-actions">
+                        <button class="btn-secondary"><i class="fas fa-print"></i> Print</button>
+                        <button class="btn-secondary"><i class="fas fa-redo"></i> Renew</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+<script>
+window.onload = function() {
+    // Load saved profile photo
+    const savedPhoto = localStorage.getItem('profilePhoto');
+    if (savedPhoto) {
+        const dashboardAvatar = document.getElementById('dashboard-avatar');
+        if (dashboardAvatar) {
+            dashboardAvatar.innerHTML = '<img src="' + savedPhoto + '" style="width: 100%; height: 100%; object-fit: cover; border-radius: 50%;">';
+        }
+    }
+    
+    // Load saved username
+    const savedSettings = localStorage.getItem('userSettings');
+    if (savedSettings) {
+        const settings = JSON.parse(savedSettings);
+        const fullName = settings.firstName + ' ' + settings.lastName;
+        const usernameEl = document.getElementById('dashboard-username');
+        if (usernameEl) {
+            usernameEl.textContent = fullName;
+        }
+    }
+};
+</script>
+</html>

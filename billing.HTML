@@ -1,0 +1,531 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Billing - Hospital Management System</title>
+    <link rel="stylesheet" href="STYLE.CSS">
+    <style>
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            animation: fadeIn 0.3s;
+            overflow-y: auto;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        .modal-content {
+            background-color: #fff;
+            margin: 0 auto;
+            padding: 0;
+            border-radius: 10px;
+            width: 100%;
+            max-width: 450px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+            animation: slideIn 0.3s;
+            position: relative;
+            top: 50%;
+            transform: translateY(-50%);
+        }
+        
+        @media (max-height: 600px) {
+            .modal-content {
+                top: 20px;
+                transform: none;
+                margin-bottom: 20px;
+            }
+        }
+        
+        @keyframes slideIn {
+            from { transform: translateY(-50px); opacity: 0; }
+            to { transform: translateY(-50%); opacity: 1; }
+        }
+        
+        @media (max-height: 600px) {
+            @keyframes slideIn {
+                from { transform: translateY(-20px); opacity: 0; }
+                to { transform: translateY(0); opacity: 1; }
+            }
+        }
+        
+        .modal-header {
+            background: var(--primary-gradient);
+            color: white;
+            padding: 20px 25px;
+            border-radius: 10px 10px 0 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .modal-header h2 {
+            margin: 0;
+            font-size: 1.3rem;
+        }
+        
+        .modal-header h2 i {
+            margin-right: 10px;
+        }
+        
+        .close {
+            color: white;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+        
+        .close:hover {
+            transform: scale(1.2);
+        }
+        
+        #invoiceForm {
+            padding: 25px;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: var(--text-dark);
+        }
+        
+        .form-group input,
+        .form-group select {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: border-color 0.3s;
+            box-sizing: border-box;
+        }
+        
+        .form-group input:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+        
+        .modal-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 15px;
+            margin-top: 25px;
+            padding-top: 20px;
+            border-top: 1px solid #e0e0e0;
+        }
+        
+        .btn-secondary {
+            padding: 12px 25px;
+            background: #6c757d;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: background 0.3s;
+        }
+        
+        .btn-secondary:hover {
+            background: #5a6268;
+        }
+        
+        .btn-primary {
+            padding: 12px 25px;
+            background: var(--primary-gradient);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(30, 60, 114, 0.4);
+        }
+        
+        /* Invoice Detail Styles */
+        .invoice-detail-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 15px 0;
+            border-bottom: 1px solid #e9ecef;
+        }
+        
+        .invoice-detail-row:last-of-type {
+            border-bottom: none;
+        }
+        
+        .detail-label {
+            font-weight: 600;
+            color: #6c757d;
+            font-size: 14px;
+        }
+        
+        .detail-value {
+            font-weight: 600;
+            color: #1e3c76;
+            font-size: 15px;
+        }
+        
+        .detail-value.amount {
+            font-size: 18px;
+            color: #28a745;
+        }
+    </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div class="dashboard-container">
+        <div class="sidebar">
+            <div class="sidebar-header">
+                <img src="IMAGES/HMS.jpg" alt="HMS Logo">
+                <p>Hospital Management</p>
+            </div>
+            <ul class="sidebar-menu">
+                <li><a href="DASHBOARD.HTML"><i class="fas fa-tachometer-alt"></i> <span>Dashboard</span></a></li>
+                <li><a href="patients.HTML"><i class="fas fa-user-injured"></i> <span>Patients</span></a></li>
+                <li><a href="doctors.HTML"><i class="fas fa-user-md"></i> <span>Doctors</span></a></li>
+                <li><a href="appointments.HTML"><i class="fas fa-calendar-check"></i> <span>Appointments</span></a></li>
+                <li><a href="departments.HTML"><i class="fas fa-hospital"></i> <span>Departments</span></a></li>
+                <li class="active"><a href="billing.HTML"><i class="fas fa-file-invoice-dollar"></i> <span>Billing</span></a></li>
+                <li><a href="reports.HTML"><i class="fas fa-chart-line"></i> <span>Reports</span></a></li>
+                <li><a href="settings.HTML"><i class="fas fa-cog"></i> <span>Settings</span></a></li>
+                <li><a href="LOGOUT.HTML"><i class="fas fa-sign-out-alt"></i> <span>Logout</span></a></li>
+            </ul>
+        </div>
+        <div class="main-content">
+            <div class="header">
+                <h1><i class="fas fa-file-invoice-dollar"></i> Billing Management</h1>
+                <div class="user-info">
+                    <div id="dashboard-avatar" class="avatar"><i class="fas fa-user"></i></div>
+                    <span id="dashboard-username">Admin User</span>
+                </div>
+            </div>
+            <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 15px; margin-bottom: 20px;">
+                <div class="stat-card" style="position: relative; overflow: hidden;">
+                    <div style="position: absolute; top: 0; left: 0; width: 4px; height: 100%; background: #28a745;"></div>
+                    <div class="icon" style="background: rgba(40,167,69,0.1); color: #28a745;"><i class="fas fa-dollar-sign"></i></div>
+                    <div class="value">$125,450</div>
+                    <div class="label">Total Revenue</div>
+                </div>
+                <div class="stat-card" style="position: relative; overflow: hidden;">
+                    <div style="position: absolute; top: 0; left: 0; width: 4px; height: 100%; background: #ff9800;"></div>
+                    <div class="icon" style="background: rgba(255,152,0,0.1); color: #ff9800;"><i class="fas fa-clock"></i></div>
+                    <div class="value">$15,230</div>
+                    <div class="label">Pending</div>
+                </div>
+                <div class="stat-card" style="position: relative; overflow: hidden;">
+                    <div style="position: absolute; top: 0; left: 0; width: 4px; height: 100%; background: #dc3545;"></div>
+                    <div class="icon" style="background: rgba(220,53,69,0.1); color: #dc3545;"><i class="fas fa-exclamation-triangle"></i></div>
+                    <div class="value">$3,500</div>
+                    <div class="label">Overdue</div>
+                </div>
+                <div class="stat-card" style="position: relative; overflow: hidden;">
+                    <div style="position: absolute; top: 0; left: 0; width: 4px; height: 100%; background: var(--primary-dark);"></div>
+                    <div class="icon" style="background: rgba(30,60,114,0.1); color: var(--primary-dark);"><i class="fas fa-calendar-check"></i></div>
+                    <div class="value">$45,200</div>
+                    <div class="label">This Month</div>
+                </div>
+            </div>
+            <div class="page-header">
+                <input type="text" id="billingSearch" class="search-box" placeholder="Search invoices by patient, ID, amount..." onkeyup="searchBilling()">
+                <button class="btn-primary" onclick="openNewInvoiceModal()"><i class="fas fa-plus"></i> New Invoice</button>
+            </div>
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>Invoice #</th>
+                        <th>Patient</th>
+                        <th>Date</th>
+                        <th>Amount</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>#INV001</td>
+                        <td><div style="display: flex; align-items: center; gap: 10px;"><div style="width: 32px; height: 32px; background: var(--primary-gradient); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-size: 0.75em; font-weight: 600;">JD</div>John Doe</div></td>
+                        <td>2026-02-13</td>
+                        <td><strong>$1,500</strong></td>
+                        <td><span class="status paid">Paid</span></td>
+                        <td>
+                            <button class="action-btn view" onclick="viewInvoice(this)"><i class="fas fa-eye"></i></button>
+                            <button class="action-btn edit"><i class="fas fa-print"></i></button>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>#INV002</td>
+                        <td><div style="display: flex; align-items: center; gap: 10px;"><div style="width: 32px; height: 32px; background: var(--primary-gradient); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-size: 0.75em; font-weight: 600;">JS</div>Jane Smith</div></td>
+                        <td>2026-02-12</td>
+                        <td><strong>$2,300</strong></td>
+                        <td><span class="status pending">Pending</span></td>
+                        <td>
+                            <button class="action-btn view" onclick="viewInvoice(this)"><i class="fas fa-eye"></i></button>
+                            <button class="action-btn edit"><i class="fas fa-print"></i></button>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>#INV003</td>
+                        <td><div style="display: flex; align-items: center; gap: 10px;"><div style="width: 32px; height: 32px; background: var(--primary-gradient); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-size: 0.75em; font-weight: 600;">MB</div>Michael Brown</div></td>
+                        <td>2026-02-10</td>
+                        <td><strong>$3,500</strong></td>
+                        <td><span class="status overdue">Overdue</span></td>
+                        <td>
+                            <button class="action-btn view" onclick="viewInvoice(this)"><i class="fas fa-eye"></i></button>
+                            <button class="action-btn delete"><i class="fas fa-times"></i></button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- New Invoice Modal -->
+    <div id="invoiceModal" class="modal" style="display: none;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2><i class="fas fa-file-invoice-dollar"></i> Create New Invoice</h2>
+                <span class="close" onclick="closeModal()">&times;</span>
+            </div>
+            <form id="invoiceForm" onsubmit="saveInvoice(event)">
+                <div class="form-group">
+                    <label for="patientSelect">Patient</label>
+                    <select id="patientSelect" required>
+                        <option value="">Select Patient</option>
+                        <option value="1">John Doe</option>
+                        <option value="2">Jane Smith</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="invoiceDate">Invoice Date</label>
+                    <input type="date" id="invoiceDate" required>
+                </div>
+                <div class="form-group">
+                    <label for="description">Description</label>
+                    <input type="text" id="description" placeholder="e.g., Consultation, Lab Test, Medication" required>
+                </div>
+                <div class="form-group">
+                    <label for="amount">Amount ($)</label>
+                    <input type="number" id="amount" placeholder="0.00" step="0.01" min="0" required>
+                </div>
+                <div class="form-group">
+                    <label for="status">Status</label>
+                    <select id="status" required>
+                        <option value="pending">Pending</option>
+                        <option value="paid">Paid</option>
+                        <option value="overdue">Overdue</option>
+                    </select>
+                </div>
+                <div class="modal-actions">
+                    <button type="button" class="btn-secondary" onclick="closeModal()">Cancel</button>
+                    <button type="submit" class="btn-primary"><i class="fas fa-save"></i> Create Invoice</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- View Invoice Modal -->
+    <div id="viewInvoiceModal" class="modal" style="display: none;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2><i class="fas fa-file-invoice"></i> Invoice Details</h2>
+                <span class="close" onclick="closeViewModal()">&times;</span>
+            </div>
+            <div style="padding: 25px;">
+                <div class="invoice-detail-row">
+                    <div class="detail-label">Invoice Number</div>
+                    <div class="detail-value" id="viewInvoiceNum">#INV001</div>
+                </div>
+                <div class="invoice-detail-row">
+                    <div class="detail-label">Patient</div>
+                    <div class="detail-value" id="viewPatient"></div>
+                </div>
+                <div class="invoice-detail-row">
+                    <div class="detail-label">Date</div>
+                    <div class="detail-value" id="viewDate">2026-02-13</div>
+                </div>
+                <div class="invoice-detail-row">
+                    <div class="detail-label">Amount</div>
+                    <div class="detail-value amount" id="viewAmount">$1,500</div>
+                </div>
+                <div class="invoice-detail-row">
+                    <div class="detail-label">Status</div>
+                    <div class="detail-value"><span class="status" id="viewStatus">Paid</span></div>
+                </div>
+                <div class="modal-actions">
+                    <button class="btn-secondary" onclick="window.print()"><i class="fas fa-print"></i> Print</button>
+                    <button class="btn-primary" onclick="closeViewModal()">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Set default date to today
+        document.getElementById('invoiceDate').valueAsDate = new Date();
+
+        function openNewInvoiceModal() {
+            document.getElementById('invoiceModal').style.display = 'block';
+        }
+
+        function closeModal() {
+            document.getElementById('invoiceModal').style.display = 'none';
+            document.getElementById('invoiceForm').reset();
+            document.getElementById('invoiceDate').valueAsDate = new Date();
+        }
+
+        // Close modal when clicking outside
+        window.onclick = function(event) {
+            var invoiceModal = document.getElementById('invoiceModal');
+            var viewModal = document.getElementById('viewInvoiceModal');
+            if (event.target == invoiceModal) {
+                closeModal();
+            }
+            if (event.target == viewModal) {
+                closeViewModal();
+            }
+        }
+
+        function saveInvoice(event) {
+            event.preventDefault();
+            
+            var patientId = document.getElementById('patientSelect').value;
+            var patientName = document.getElementById('patientSelect').options[document.getElementById('patientSelect').selectedIndex].text;
+            var date = document.getElementById('invoiceDate').value;
+            var description = document.getElementById('description').value;
+            var amount = parseFloat(document.getElementById('amount').value);
+            var status = document.getElementById('status').value;
+            
+            // Generate invoice number
+            var invoiceNum = 'INV' + String(Math.floor(Math.random() * 9000) + 1000);
+            
+            // Get initials for avatar
+            var initials = patientName.split(' ').map(n => n[0]).join('').substring(0,2).toUpperCase();
+            
+            // Create new row
+            var tbody = document.querySelector('.data-table tbody');
+            var newRow = document.createElement('tr');
+            newRow.innerHTML = `
+                <td>#${invoiceNum}</td>
+                <td><div style="display: flex; align-items: center; gap: 10px;"><div style="width: 32px; height: 32px; background: var(--primary-gradient); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-size: 0.75em; font-weight: 600;">${initials}</div>${patientName}</div></td>
+                <td>${date}</td>
+                <td><strong>${amount.toLocaleString()}</strong></td>
+                <td><span class="status ${status}">${status.charAt(0).toUpperCase() + status.slice(1)}</span></td>
+                <td>
+                    <button class="action-btn view" onclick="viewInvoice(this)"><i class="fas fa-eye"></i></button>
+                    <button class="action-btn edit"><i class="fas fa-print"></i></button>
+                </td>
+            `;
+            
+            // Add new row at the beginning
+            tbody.insertBefore(newRow, tbody.firstChild);
+            
+            // Update statistics
+            updateStatistics();
+            
+            // Close modal
+            closeModal();
+            
+            alert('Invoice #' + invoiceNum + ' created successfully!');
+        }
+        
+        function updateStatistics() {
+            // This would update the stats based on actual data
+            // For demo purposes, we'll just show an alert
+            console.log('Statistics updated');
+        }
+        
+        function viewInvoice(button) {
+            var row = button.closest('tr');
+            var cells = row.querySelectorAll('td');
+            
+            var invoiceNum = cells[0].textContent;
+            var patientInfo = cells[1].innerHTML;
+            var date = cells[2].textContent;
+            var amount = cells[3].textContent;
+            var status = cells[4].querySelector('.status').textContent;
+            
+            document.getElementById('viewInvoiceNum').textContent = invoiceNum;
+            document.getElementById('viewPatient').innerHTML = patientInfo;
+            document.getElementById('viewDate').textContent = date;
+            document.getElementById('viewAmount').textContent = amount;
+            document.getElementById('viewStatus').textContent = status;
+            
+            var statusEl = document.getElementById('viewStatus');
+            statusEl.className = 'status ' + status.toLowerCase();
+            
+            document.getElementById('viewInvoiceModal').style.display = 'block';
+        }
+        
+        function closeViewModal() {
+            document.getElementById('viewInvoiceModal').style.display = 'none';
+        }
+    </script>
+</body>
+<script>
+function searchBilling() {
+    const searchInput = document.getElementById('billingSearch').value.toLowerCase();
+    const table = document.querySelector('.data-table');
+    const rows = table.getElementsByTagName('tbody')[0].getElementsByTagName('tr');
+    
+    for (let i = 0; i < rows.length; i++) {
+        const row = rows[i];
+        const cells = row.getElementsByTagName('td');
+        let found = false;
+        
+        for (let j = 0; j < cells.length; j++) {
+            const cellText = cells[j].textContent || cells[j].innerText;
+            if (cellText.toLowerCase().indexOf(searchInput) > -1) {
+                found = true;
+                break;
+            }
+        }
+        
+        if (found) {
+            row.style.display = '';
+        } else {
+            row.style.display = 'none';
+        }
+    }
+}
+
+window.onload = function() {
+    const savedPhoto = localStorage.getItem('profilePhoto');
+    if (savedPhoto) {
+        const dashboardAvatar = document.getElementById('dashboard-avatar');
+        if (dashboardAvatar) {
+            dashboardAvatar.innerHTML = '<img src="' + savedPhoto + '" style="width: 100%; height: 100%; object-fit: cover; border-radius: 50%;">';
+        }
+    }
+    const savedSettings = localStorage.getItem('userSettings');
+    if (savedSettings) {
+        const settings = JSON.parse(savedSettings);
+        const fullName = settings.firstName + ' ' + settings.lastName;
+        const usernameEl = document.getElementById('dashboard-username');
+        if (usernameEl) usernameEl.textContent = fullName;
+    }
+};
+</script>
+</html>

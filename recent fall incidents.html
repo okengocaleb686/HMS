@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Recent Fall Incidents - Patient Safety Dashboard</title>
+    <link rel="stylesheet" href="STYLE.CSS">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #f5f7fa; }
+        .page-container { min-height: 100vh; }
+        .page-header { background: linear-gradient(135deg, #dc2626 0%, #ef4444 100%); color: white; padding: 25px 40px; }
+        .header-content { display: flex; justify-content: space-between; align-items: center; }
+        .header-title h1 { font-size: 1.8rem; margin-bottom: 5px; display: flex; align-items: center; gap: 12px; }
+        .header-title p { opacity: 0.9; font-size: 0.95rem; }
+        .header-actions { display: flex; gap: 12px; }
+        .btn { padding: 10px 20px; border: none; border-radius: 8px; cursor: pointer; display: flex; align-items: center; gap: 8px; font-size: 0.9rem; transition: all 0.3s; }
+        .btn-primary { background: white; color: #dc2626; }
+        .btn-secondary { background: rgba(255,255,255,0.2); color: white; }
+        .btn:hover { transform: translateY(-2px); }
+        .back-link { display: inline-flex; align-items: center; gap: 8px; color: white; text-decoration: none; padding: 15px 40px; font-size: 0.9rem; background: rgba(0,0,0,0.1); width: 100%; }
+        .back-link:hover { background: rgba(0,0,0,0.2); }
+        .stats-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; padding: 25px 40px; background: white; }
+        .stat-card { padding: 20px; border-radius: 12px; background: #f8f9fa; position: relative; overflow: hidden; }
+        .stat-card::before { content: ''; position: absolute; top: 0; left: 0; width: 4px; height: 100%; }
+        .stat-card.red::before { background: #dc2626; }
+        .stat-card.orange::before { background: #f59e0b; }
+        .stat-card.yellow::before { background: #eab308; }
+        .stat-card.green::before { background: #10b981; }
+        .stat-icon { width: 45px; height: 45px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 1.3rem; margin-bottom: 10px; }
+        .stat-icon.red { background: rgba(220,38,38,0.1); color: #dc2626; }
+        .stat-icon.orange { background: rgba(245,158,11,0.1); color: #f59e0b; }
+        .stat-icon.yellow { background: rgba(234,179,8,0.1); color: #eab308; }
+        .stat-icon.green { background: rgba(16,185,129,0.1); color: #10b981; }
+        .stat-value { font-size: 2rem; font-weight: 700; color: #1a1a2e; }
+        .stat-label { font-size: 0.9rem; color: #666; margin-top: 5px; }
+        .filters-bar { padding: 20px 40px; background: white; border-bottom: 1px solid #eee; display: flex; gap: 20px; flex-wrap: wrap; }
+        .filter-group { display: flex; align-items: center; gap: 10px; }
+        .filter-label { font-weight: 500; color: #333; }
+        .filter-select { padding: 10px 15px; border: 1px solid #ddd; border-radius: 6px; font-size: 0.9rem; min-width: 150px; }
+        .date-input { padding: 10px 15px; border: 1px solid #ddd; border-radius: 6px; font-size: 0.9rem; }
+        .main-content { padding: 30px 40px; }
+        .incident-list { display: flex; flex-direction: column; gap: 20px; }
+        .incident-card { background: white; border-radius: 12px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); overflow: hidden; }
+        .incident-header { padding: 20px 25px; background: #f8f9fa; border-bottom: 1px solid #eee; display: flex; justify-content: space-between; align-items: center; }
+        .incident-id { font-weight: 700; color: #dc2626; font-size: 1.1rem; }
+        .incident-date { color: #666; font-size: 0.9rem; }
+        .incident-body { padding: 25px; display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 25px; }
+        .incident-section h4 { font-size: 0.85rem; color: #999; text-transform: uppercase; margin-bottom: 12px; }
+        .incident-section p { color: #333; margin-bottom: 8px; }
+        .incident-section strong { color: #1a1a2e; }
+        .severity-badge { padding: 6px 14px; border-radius: 20px; font-size: 0.85rem; font-weight: 600; text-transform: uppercase; }
+        .severity-badge.minor { background: rgba(59,130,246,0.1); color: #3b82f6; }
+        .severity-badge.moderate { background: rgba(245,158,11,0.1); color: #f59e0b; }
+        .severity-badge.major { background: rgba(220,38,38,0.1); color: #dc2626; }
+        .status-badge { padding: 5px 12px; border-radius: 20px; font-size: 0.8rem; font-weight: 500; }
+        .status-badge.open { background: rgba(220,38,38,0.1); color: #dc2626; }
+        .status-badge.investigating { background: rgba(245,158,11,0.1); color: #f59e0b; }
+        .status-badge.resolved { background: rgba(16,185,129,0.1); color: #10b981; }
+        .incident-footer { padding: 15px 25px; background: #f8f9fa; border-top: 1px solid #eee; display: flex; justify-content: space-between; align-items: center; }
+        .action-btn { padding: 8px 16px; background: #dc2626; color: white; border: none; border-radius: 6px; cursor: pointer; font-size: 0.85rem; display: flex; align-items: center; gap: 6px; }
+        .action-btn:hover { background: #b91c1c; }
+        .secondary-btn { padding: 8px 16px; background: white; color: #333; border: 1px solid #ddd; border-radius: 6px; cursor: pointer; font-size: 0.85rem; }
+        .secondary-btn:hover { border-color: #dc2626; color: #dc2626; }
+        .timeline { position: relative; padding-left: 20px; border-left: 2px solid #e5e7eb; }
+        .timeline-item { position: relative; padding-bottom: 15px; }
+        .timeline-item::before { content: ''; position: absolute; left: -26px; top: 5px; width: 10px; height: 10px; background: #dc2626; border-radius: 50%; }
+        .timeline-date { font-size: 0.75rem; color: #999; }
+        .timeline-text { font-size: 0.9rem; color: #333; margin-top: 4px; }
+        .fall-type-tag { display: inline-block; padding: 4px 10px; background: #f0f0f0; border-radius: 15px; font-size: 0.75rem; margin-right: 5px; }
+        .location-tag { display: inline-block; padding: 4px 10px; background: rgba(220,38,38,0.1); color: #dc2626; border-radius: 15px; font-size: 0.75rem; }
+    </style>
+</head>
+<body>
+    <div class="page-container">
+        <a href="nurse_dashboard.HTML" class="back-link">
+            <i class="fas fa-arrow-left"></i> Back to Nurse Dashboard
+        </a>
+        
+        <div class="page-header">
+            <div class="header-content">
+                <div class="header-title">
+                    <h1><i class="fas fa-user-injured"></i> Recent Fall Incidents</h1>
+                    <p>Patient fall tracking and investigation management</p>
+                </div>
+                <div class="header-actions">
+                    <button class="btn btn-secondary"><i class="fas fa-download"></i> Export Report</button>
+                    <button class="btn btn-secondary"><i class="fas fa-chart-line"></i> Analytics</button>
+                    <button class="btn btn-primary"><i class="fas fa-plus"></i> Report Incident</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="stats-row">
+            <div class="stat-card red">
+                <div class="stat-icon red"><i class="fas fa-exclamation-circle"></i></div>
+                <div class="stat-value">127</div>
+                <div class="stat-label">Total Falls (MTD)</div>
+            </div>
+            <div class="stat-card orange">
+                <div class="stat-icon orange"><i class="fas fa-exclamation-triangle"></i></div>
+                <div class="stat-value">18</div>
+                <div class="stat-label">Falls with Injury</div>
+            </div>
+            <div class="stat-card yellow">
+                <div class="stat-icon yellow"><i class="fas fa-clock"></i></div>
+                <div class="stat-value">12</div>
+                <div class="stat-label">Open Cases</div>
+            </div>
+            <div class="stat-card green">
+                <div class="stat-icon green"><i class="fas fa-check-circle"></i></div>
+                <div class="stat-value">115</div>
+                <div class="stat-label">Resolved Cases</div>
+            </div>
+        </div>
+
+        <div class="filters-bar">
+            <div class="filter-group">
+                <span class="filter-label">Date Range:</span>
+                <input type="date" class="date-input" value="2026-02-01">
+                <span style="color: #666;">to</span>
+                <input type="date" class="date-input" value="2026-02-18">
+            </div>
+            <div class="filter-group">
+                <span class="filter-label">Severity:</span>
+                <select class="filter-select">
+                    <option>All Severity</option>
+                    <option>Minor</option>
+                    <option>Moderate</option>
+                    <option>Major</option>
+                </select>
+            </div>
+            <div class="filter-group">
+                <span class="filter-label">Facility:</span>
+                <select class="filter-select">
+                    <option>All Facilities</option>
+                    <option>Central Hospital</option>
+                    <option>Regional Medical</option>
+                    <option>District Hospital</option>
+                </select>
+            </div>
+            <div class="filter-group">
+                <span class="filter-label">Status:</span>
+                <select class="filter-select">
+                    <option>All Status</option>
+                    <option>Open</option>
+                    <option>Investigating</option>
+                    <option>Resolved</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="main-content">
+            <div class="incident-list">
+                <!-- Incident Card 1 -->
+                <div class="incident-card">
+                    <div class="incident-header">
+                        <div>
+                            <span class="incident-id">FALL-2026-0147</span>
+                            <span style="margin-left: 15px; color: #666;">Feb 17, 2026 - 14:32</span>
+                        </div>
+                        <span class="severity-badge major">Major</span>
+                    </div>
+                    <div class="incident-body">
+                        <div class="incident-section">
+                            <h4><i class="fas fa-user"></i> Patient Information</h4>
+                            <p><strong>Name:</strong> Robert Johnson</p>
+                            <p><strong>Age:</strong> 78 years</p>
+                            <p><strong>Room:</strong> 302-A</p>
+                            <p><strong>Diagnosis:</strong> Post-hip replacement</p>
+                            <p><strong>Mobility:</strong> Assist required</p>
+                        </div>
+                        <div class="incident-section">
+                            <h4><i class="fas fa-map-marker-alt"></i> Incident Details</h4>
+                            <p><strong>Location:</strong> Patient Bathroom</p>
+                            <p><strong>Fall Type:</strong> Toileting</p>
+                            <p><strong>Time:</strong> 14:32 hours</p>
+                            <p><strong>Witnessed:</strong> No</p>
+                            <p><strong>Injury:</strong> Hip fracture</p>
+                        </div>
+                        <div class="incident-section">
+                            <h4><i class="fas fa-clipboard-list"></i> Investigation</h4>
+                            <p><strong>Status:</strong> <span class="status-badge open">Open</span></p>
+                            <p><strong>Assigned To:</strong> Safety Officer</p>
+                            <p><strong>Root Cause:</strong> Pending analysis</p>
+                            <p><strong>Contributing Factors:</strong></p>
+                            <span class="fall-type-tag">No bed alarm</span>
+                            <span class="fall-type-tag">Night shift</span>
+                        </div>
+                    </div>
+                    <div class="incident-footer">
+                        <div class="timeline">
+                            <div class="timeline-item">
+                                <div class="timeline-date">Feb 17, 2026 - 14:45</div>
+                                <div class="timeline-text">Incident reported to charge nurse</div>
+                            </div>
+                            <div class="timeline-item">
+                                <div class="timeline-date">Feb 17, 2026 - 15:30</div>
+                                <div class="timeline-text">Patient transferred to ED for evaluation</div>
+                            </div>
+                        </div>
+                        <div>
+                            <button class="secondary-btn"><i class="fas fa-file-alt"></i> View Report</button>
+                            <button class="action-btn"><i class="fas fa-edit"></i> Update</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Incident Card 2 -->
+                <div class="incident-card">
+                    <div class="incident-header">
+                        <div>
+                            <span class="incident-id">FALL-2026-0146</span>
+                            <span style="margin-left: 15px; color: #666;">Feb 16, 2026 - 09:15</span>
+                        </div>
+                        <span class="severity-badge moderate">Moderate</span>
+                    </div>
+                    <div class="incident-body">
+                        <div class="incident-section">
+                            <h4><i class="fas fa-user"></i> Patient Information</h4>
+                            <p><strong>Name:</strong> Maria Garcia</p>
+                            <p><strong>Age:</strong> 65 years</p>
+                            <p><strong>Room:</strong> 415-B</p>
+                            <p><strong>Diagnosis:</strong> Pneumonia</p>
+                            <p><strong>Mobility:</strong> Ambulatory</p>
+                        </div>
+                        <div class="incident-section">
+                            <h4><i class="fas fa-map-marker-alt"></i> Incident Details</h4>
+                            <p><strong>Location:</strong> Room 415-B</p>
+                            <p><strong>Fall Type:</strong> Bed-related</p>
+                            <p><strong>Time:</strong> 09:15 hours</p>
+                            <p><strong>Witnessed:</strong> Yes - Family member</p>
+                            <p><strong>Injury:</strong> Contusion, left arm</p>
+                        </div>
+                        <div class="incident-section">
+                            <h4><i class="fas fa-clipboard-list"></i> Investigation</h4>
+                            <p><strong>Status:</strong> <span class="status-badge investigating">Investigating</span></p>
+                            <p><strong>Assigned To:</strong> Unit Manager</p>
+                            <p><strong>Root Cause:</strong> Bed rails down</p>
+                            <p><strong>Contributing Factors:</strong></p>
+                            <span class="fall-type-tag">Confused patient</span>
+                            <span class="fall-type-tag">Bed rail issue</span>
+                        </div>
+                    </div>
+                    <div class="incident-footer">
+                        <div class="timeline">
+                            <div class="timeline-item">
+                                <div class="timeline-date">Feb 16, 2026 - 09:20</div>
+                                <div class="timeline-text">Initial assessment completed</div>
+                            </div>
+                            <div class="timeline-item">
+                                <div class="timeline-date">Feb 16, 2026 - 11:00</div>
+                                <div class="timeline-text">Family notified and briefed</div>
+                            </div>
+                        </div>
+                        <div>
+                            <button class="secondary-btn"><i class="fas fa-file-alt"></i> View Report</button>
+                            <button class="action-btn"><i class="fas fa-edit"></i> Update</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Incident Card 3 -->
+                <div class="incident-card">
+                    <div class="incident-header">
+                        <div>
+                            <span class="incident-id">FALL-2026-0145</span>
+                            <span style="margin-left: 15px; color: #666;">Feb 15, 2026 - 22:48</span>
+                        </div>
+                        <span class="severity-badge minor">Minor</span>
+                    </div>
+                    <div class="incident-body">
+                        <div class="incident-section">
+                            <h4><i class="fas fa-user"></i> Patient Information</h4>
+                            <p><strong>Name:</strong> James Wilson</p>
+                            <p><strong>Age:</strong> 72 years</p>
+                            <p><strong>Room:</strong> 208-A</p>
+                            <p><strong>Diagnosis:</strong> Cardiac arrest recovery</p>
+                            <p><strong>Mobility:</strong> Ambulatory</p>
+                        </div>
+                        <div class="incident-section">
+                            <h4><i class="fas fa-map-marker-alt"></i> Incident Details</h4>
+                            <p><strong>Location:</strong> Hallway</p>
+                            <p><strong>Fall Type:</strong> Walking</p>
+                            <p><strong>Time:</strong> 22:48 hours</p>
+                            <p><strong>Witnessed:</strong> No</p>
+                            <p><strong>Injury:</strong> No injury</p>
+                        </div>
+                        <div class="incident-section">
+                            <h4><i class="fas fa-clipboard-list"></i> Investigation</h4>
+                            <p><strong>Status:</strong> <span class="status-badge resolved">Resolved</span></p>
+                            <p><strong>Assigned To:</strong> Unit Manager</p>
+                            <p><strong>Root Cause:</strong> Patient refused assistance</p>
+                            <p><strong>Contributing Factors:</strong></p>
+                            <span class="fall-type-tag">Independent mobility</span>
+                            <span class="fall-type-tag">Night time</span>
+                        </div>
+                    </div>
+                    <div class="incident-footer">
+                        <div class="timeline">
+                            <div class="timeline-item">
+                                <div class="timeline-date">Feb 15, 2026 - 22:55</div>
+                                <div class="timeline-text">Nurse assessed patient - no injuries</div>
+                            </div>
+                            <div class="timeline-item">
+                                <div class="timeline-date">Feb 16, 2026 - 08:00</div>
+                                <div class="timeline-text">Case closed - preventive measures in place</div>
+                            </div>
+                        </div>
+                        <div>
+                            <button class="secondary-btn"><i class="fas fa-file-alt"></i> View Report</button>
+                            <button class="action-btn"><i class="fas fa-check"></i> Closed</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Incident Card 4 -->
+                <div class="incident-card">
+                    <div class="incident-header">
+                        <div>
+                            <span class="incident-id">FALL-2026-0144</span>
+                            <span style="margin-left: 15px; color: #666;">Feb 14, 2026 - 16:20</span>
+                        </div>
+                        <span class="severity-badge moderate">Moderate</span>
+                    </div>
+                    <div class="incident-body">
+                        <div class="incident-section">
+                            <h4><i class="fas fa-user"></i> Patient Information</h4>
+                            <p><strong>Name:</strong> Susan Miller</p>
+                            <p><strong>Age:</strong> 81 years</p>
+                            <p><strong>Room:</strong> 501-C</p>
+                            <p><strong>Diagnosis:</strong> Stroke</p>
+                            <p><strong>Mobility:</strong> Wheelchair</p>
+                        </div>
+                        <div class="incident-section">
+                            <h4><i class="fas fa-map-marker-alt"></i> Incident Details</h4>
+                            <p><strong>Location:</strong> Physical Therapy Room</p>
+                            <p><strong>Fall Type:</strong> Transfer</p>
+                            <p><strong>Time:</strong> 16:20 hours</p>
+                            <p><strong>Witnessed:</strong> Yes - PT Therapist</p>
+                            <p><strong>Injury:</strong> Bruising, hip</p>
+                        </div>
+                        <div class="incident-section">
+                            <h4><i class="fas fa-clipboard-list"></i> Investigation</h4>
+                            <p><strong>Status:</strong> <span class="status-badge resolved">Resolved</span></p>
+                            <p><strong>Assigned To:</strong> Quality Team</p>
+                            <p><strong>Root Cause:</strong> Transfer equipment malfunction</p>
+                            <p><strong>Contributing Factors:</strong></p>
+                            <span class="fall-type-tag">Equipment issue</span>
+                            <span class="fall-type-tag">Therapy session</span>
+                        </div>
+                    </div>
+                    <div class="incident-footer">
+                        <div class="timeline">
+                            <div class="timeline-item">
+                                <div class="timeline-date">Feb 14, 2026 - 16:30</div>
+                                <div class="timeline-text">Immediate medical evaluation</div>
+                            </div>
+                            <div class="timeline-item">
+                                <div class="timeline-date">Feb 15, 2026 - 14:00</div>
+                                <div class="timeline-text">Equipment inspected - issue identified</div>
+                            </div>
+                        </div>
+                        <div>
+                            <button class="secondary-btn"><i class="fas fa-file-alt"></i> View Report</button>
+                            <button class="action-btn"><i class="fas fa-check"></i> Closed</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

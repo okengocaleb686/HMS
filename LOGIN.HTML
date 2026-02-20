@@ -1,0 +1,572 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - Hospital Management System</title>
+    <link rel="stylesheet" href="STYLE.CSS">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* Login-specific styles */
+        .login-page {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, #0d6efd 0%, #0a58ca 100%);
+            padding: 20px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .login-page::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+            animation: rotate 30s linear infinite;
+        }
+        
+        @keyframes rotate {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+        
+        .login-container {
+            position: relative;
+            z-index: 10;
+            width: 100%;
+            max-width: 450px;
+        }
+        
+        .role-selector {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 12px;
+            margin-bottom: 25px;
+        }
+        
+        .role-option {
+            padding: 18px 10px;
+            border: 2px solid #e0e0e0;
+            border-radius: 16px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            background: linear-gradient(145deg, #ffffff 0%, #f8f9fa 100%);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .role-option::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: transparent;
+            transition: all 0.3s;
+        }
+        
+        .role-option:hover {
+            border-color: #0d6efd;
+            transform: translateY(-4px);
+            box-shadow: 0 10px 30px rgba(13, 110, 253, 0.2);
+        }
+        
+        .role-option:hover::before {
+            background: linear-gradient(90deg, #0d6efd, #0a58ca);
+        }
+        
+        .role-option.active {
+            border-color: #0d6efd;
+            background: linear-gradient(145deg, rgba(13,110,253,0.1) 0%, rgba(13,110,253,0.05) 100%);
+            box-shadow: 0 8px 25px rgba(13, 110, 253, 0.25);
+        }
+        
+        .role-option.active::before {
+            background: linear-gradient(90deg, #0d6efd, #0a58ca);
+        }
+        
+        .role-option i {
+            font-size: 1.8rem;
+            margin-bottom: 10px;
+            display: block;
+            transition: all 0.3s;
+        }
+        
+        .role-option.admin i { 
+            color: #dc3545; 
+            background: rgba(220, 53, 69, 0.15);
+            width: 60px;
+            height: 60px;
+            line-height: 60px;
+            border-radius: 50%;
+            margin: 0 auto 10px;
+            border: 2px solid rgba(220, 53, 69, 0.3);
+            box-shadow: 0 4px 15px rgba(220, 53, 69, 0.2);
+        }
+        .role-option.admin:hover i, .role-option.admin.active i {
+            background: #dc3545;
+            color: white;
+            border-color: #dc3545;
+            box-shadow: 0 6px 20px rgba(220, 53, 69, 0.4);
+        }
+        
+        .role-option.nurse i { 
+            color: #0d9488; 
+            background: rgba(13, 148, 136, 0.15);
+            width: 60px;
+            height: 60px;
+            line-height: 60px;
+            border-radius: 50%;
+            margin: 0 auto 10px;
+            border: 2px solid rgba(13, 148, 136, 0.3);
+            box-shadow: 0 4px 15px rgba(13, 148, 136, 0.2);
+        }
+        .role-option.nurse:hover i, .role-option.nurse.active i {
+            background: #0d9488;
+            color: white;
+            border-color: #0d9488;
+            box-shadow: 0 6px 20px rgba(13, 148, 136, 0.4);
+        }
+        
+        .role-option.doctor i { 
+            color: #0d6efd; 
+            background: rgba(13, 110, 253, 0.15);
+            width: 60px;
+            height: 60px;
+            line-height: 60px;
+            border-radius: 50%;
+            margin: 0 auto 10px;
+            border: 2px solid rgba(13, 110, 253, 0.3);
+            box-shadow: 0 4px 15px rgba(13, 110, 253, 0.2);
+        }
+        .role-option.doctor:hover i, .role-option.doctor.active i {
+            background: #0d6efd;
+            color: white;
+            border-color: #0d6efd;
+            box-shadow: 0 6px 20px rgba(13, 110, 253, 0.4);
+        }
+        
+        .role-option.patient i { 
+            color: #28a745; 
+            background: rgba(40, 167, 69, 0.15);
+            width: 60px;
+            height: 60px;
+            line-height: 60px;
+            border-radius: 50%;
+            margin: 0 auto 10px;
+            border: 2px solid rgba(40, 167, 69, 0.3);
+            box-shadow: 0 4px 15px rgba(40, 167, 69, 0.2);
+        }
+        .role-option.patient:hover i, .role-option.patient.active i {
+            background: #28a745;
+            color: white;
+            border-color: #28a745;
+            box-shadow: 0 6px 20px rgba(40, 167, 69, 0.4);
+        }
+        
+        .role-option span {
+            font-size: 0.8rem;
+            font-weight: 700;
+            color: #555;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .role-option.active span {
+            color: #0d6efd;
+        }
+        
+        .role-credentials {
+            background: linear-gradient(145deg, #f8f9fa 0%, #e9ecef 100%);
+            padding: 10px 15px;
+            border-radius: 8px;
+            margin-top: 10px;
+            border-left: 3px solid #0d6efd;
+        }
+        
+        .role-credentials small {
+            color: #666;
+            font-size: 0.8rem;
+        }
+        
+        .role-credentials i {
+            color: #0d6efd;
+            margin-right: 5px;
+        }
+        
+        .login-card {
+            background: white;
+            border-radius: 20px;
+            padding: 40px 35px;
+            box-shadow: 0 25px 80px rgba(0, 0, 0, 0.35);
+            animation: slideUp 0.6s ease-out;
+        }
+        
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .login-logo {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        .login-logo .logo-img {
+            width: 100px;
+            height: 100px;
+            object-fit: cover;
+            border-radius: 50%;
+            box-shadow: 0 8px 25px rgba(13, 148, 136, 0.4);
+            border: 3px solid rgba(255,255,255,0.3);
+            margin-bottom: 15px;
+        }
+        
+        .login-logo .logo-circle {
+            display: none;
+        }
+        
+        .login-logo h1 {
+            color: #0d6efd;
+            font-size: 1.6em;
+            font-weight: 700;
+        }
+        
+        .login-logo p {
+            color: #666;
+            font-size: 0.9em;
+            margin-top: 5px;
+        }
+        
+        .login-form {
+            margin-bottom: 20px;
+        }
+        
+        .login-form .form-group {
+            margin-bottom: 18px;
+        }
+        
+        .login-form label {
+            display: block;
+            margin-bottom: 8px;
+            color: #333;
+            font-weight: 600;
+            font-size: 0.9em;
+        }
+        
+        .login-form input {
+            width: 100%;
+            padding: 14px 18px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 1em;
+            transition: all 0.3s;
+        }
+        
+        .login-form input:focus {
+            outline: none;
+            border-color: #0d6efd;
+            box-shadow: 0 0 0 3px rgba(13,110,253,0.1);
+        }
+        
+        .login-form input::placeholder {
+            color: #999;
+        }
+        
+        .login-btn {
+            width: 100%;
+            background: linear-gradient(135deg, #0d6efd 0%, #0a58ca 100%);
+            color: white;
+            border: none;
+            padding: 16px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 1em;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            transition: all 0.3s;
+            box-shadow: 0 8px 25px rgba(30, 60, 114, 0.35);
+            margin-top: 10px;
+        }
+        
+        .login-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 35px rgba(13,110,253,0.45);
+        }
+        
+        .login-links {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 1px solid #f0f0f0;
+        }
+        
+        .login-links a {
+            color: #0d6efd;
+            text-decoration: none;
+            font-size: 0.9em;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            transition: color 0.3s;
+        }
+        
+        .login-links a:hover {
+            color: #0a58ca;
+            text-decoration: underline;
+        }
+        
+        .login-divider {
+            display: flex;
+            align-items: center;
+            margin: 25px 0;
+            color: #999;
+            font-size: 0.85em;
+        }
+        
+        .login-divider::before,
+        .login-divider::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background: #e0e0e0;
+        }
+        
+        .login-divider span {
+            padding: 0 15px;
+        }
+        
+        .social-login {
+            display: flex;
+            gap: 12px;
+        }
+        
+        .social-btn {
+            flex: 1;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            background: white;
+            cursor: pointer;
+            font-size: 1.1em;
+            transition: all 0.3s;
+            color: #666;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .social-btn:hover {
+            border-color: #0d6efd;
+            color: #0d6efd;
+            background: rgba(13,110,253,0.05);
+        }
+        
+        .login-features {
+            display: flex;
+            justify-content: center;
+            gap: 25px;
+            margin-top: 30px;
+            padding-top: 25px;
+            border-top: 1px solid #f0f0f0;
+        }
+        
+        .login-features .feature {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: #999;
+            font-size: 0.8em;
+        }
+        
+        .login-features .feature i {
+            color: #28a745;
+        }
+        
+        @media (max-width: 480px) {
+            .login-card {
+                padding: 30px 25px;
+            }
+            
+            .login-features {
+                flex-direction: column;
+                gap: 12px;
+            }
+            
+            .social-login {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="login-page">
+        <div class="login-container">
+            <div class="login-card">
+                <div class="login-logo">
+                    <img src="IMAGES/HMS.jpg" alt="HMS Logo" class="logo-img">
+                    <h1>HMS</h1>
+                    <p>Hospital Management System</p>
+                </div>
+                <form class="login-form" onsubmit="return validateLogin(event)">
+                    <div class="form-group">
+                        <label><i class="fas fa-users"></i> Select Role</label>
+                        <div class="role-selector">
+                            <div class="role-option admin active" onclick="selectRole('admin', this)">
+                                <i class="fas fa-user-shield"></i>
+                                <span>Admin</span>
+                            </div>
+                            <div class="role-option nurse" onclick="selectRole('nurse', this)">
+                                <i class="fas fa-user-nurse"></i>
+                                <span>Nurse</span>
+                            </div>
+                            <div class="role-option doctor" onclick="selectRole('doctor', this)">
+                                <i class="fas fa-user-md"></i>
+                                <span>Doctor</span>
+                            </div>
+                            <div class="role-option patient" onclick="selectRole('patient', this)">
+                                <i class="fas fa-user-injured"></i>
+                                <span>Patient</span>
+                            </div>
+                        </div>
+                        <div id="roleCredentials" class="role-credentials">
+                            <small><i class="fas fa-info-circle"></i> Admin: admin@hms.com / admin123</small>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label><i class="fas fa-envelope"></i> Email Address</label>
+                        <input type="email" id="loginEmail" placeholder="Enter your email" required>
+                    </div>
+                    <div class="form-group">
+                        <label><i class="fas fa-lock"></i> Password</label>
+                        <input type="password" id="loginPassword" placeholder="Enter your password" required>
+                    </div>
+                    <div id="loginError" style="color: #dc3545; font-size: 0.85em; margin-bottom: 10px; display: none;"></div>
+                    <button type="submit" class="login-btn"><i class="fas fa-sign-in-alt"></i> Sign In</button>
+                </form>
+                <div class="login-links">
+                    <a href="FORGOT PASSWORD.HTML"><i class="fas fa-question-circle"></i> Forgot Password?</a>
+                    <a href="CREATE ACCOUNT.HTML"><i class="fas fa-user-plus"></i> Create Account</a>
+                </div>
+                <div class="login-divider"><span>Or continue with</span></div>
+                <div class="social-login">
+                    <button class="social-btn"><i class="fab fa-google"></i></button>
+                    <button class="social-btn"><i class="fab fa-microsoft"></i></button>
+                    <button class="social-btn"><i class="fab fa-apple"></i></button>
+                </div>
+                <div class="login-features">
+                    <div class="feature"><i class="fas fa-shield-alt"></i> Secure</div>
+                    <div class="feature"><i class="fas fa-clock"></i> 24/7 Access</div>
+                    <div class="feature"><i class="fas fa-user-md"></i> HIPAA</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+<script>
+let selectedRole = 'admin';
+
+// Role credentials
+const roleCredentialsInfo = {
+    admin: '<small><i class="fas fa-info-circle"></i> Admin: admin@hms.com / admin123</small>',
+    nurse: '<small><i class="fas fa-info-circle"></i> Nurse: nurse@hms.com / nurse123</small>',
+    doctor: '<small><i class="fas fa-info-circle"></i> Doctor: doctor@hms.com / doctor123</small>',
+    patient: '<small><i class="fas fa-info-circle"></i> Patient: patient@hms.com / patient123</small>'
+};
+
+// Auto-fill credentials for each role
+const autoFillCredentials = {
+    admin: { email: 'admin@hms.com', password: 'admin123' },
+    nurse: { email: 'nurse@hms.com', password: 'nurse123' },
+    doctor: { email: 'doctor@hms.com', password: 'doctor123' },
+    patient: { email: 'patient@hms.com', password: 'patient123' }
+};
+
+function selectRole(role, element) {
+    selectedRole = role;
+    // Remove active class from all roles
+    document.querySelectorAll('.role-option').forEach(el => el.classList.remove('active'));
+    // Add active class to selected role
+    element.classList.add('active');
+    
+    // Update credentials display
+    document.getElementById('roleCredentials').innerHTML = roleCredentialsInfo[role];
+    
+    // Auto-fill email and password
+    const creds = autoFillCredentials[role];
+    document.getElementById('loginEmail').value = creds.email;
+    document.getElementById('loginPassword').value = creds.password;
+    
+    // Clear any error message
+    document.getElementById('loginError').style.display = 'none';
+}
+
+function validateLogin(event) {
+    event.preventDefault();
+    
+    const email = document.getElementById('loginEmail').value.trim();
+    const password = document.getElementById('loginPassword').value;
+    const errorDiv = document.getElementById('loginError');
+    
+    // Role-based credentials
+    const credentials = {
+        admin: { email: 'admin@hms.com', password: 'admin123', name: 'Administrator', dashboard: 'DASHBOARD.HTML' },
+        nurse: { email: 'nurse@hms.com', password: 'nurse123', name: 'Sarah Johnson', dashboard: 'nurse_dashboard.HTML' },
+        doctor: { email: 'doctor@hms.com', password: 'doctor123', name: 'Dr. John Smith', dashboard: 'DASHBOARD.HTML' },
+        patient: { email: 'patient@hms.com', password: 'patient123', name: 'John Doe', dashboard: 'patient_dashboard.HTML' }
+    };
+    
+    const roleCreds = credentials[selectedRole];
+    
+    if (email === roleCreds.email && password === roleCreds.password) {
+        // Save login state
+        localStorage.setItem('isLoggedIn', 'true');
+        localStorage.setItem('userRole', selectedRole);
+        localStorage.setItem('userEmail', email);
+        localStorage.setItem('userName', roleCreds.name);
+        localStorage.setItem('userSettings', JSON.stringify({
+            firstName: roleCreds.name.split(' ')[0],
+            lastName: roleCreds.name.split(' ').slice(1).join(' '),
+            email: email,
+            phone: '+1 555-0100'
+        }));
+        
+        // Redirect to role-specific dashboard
+        window.location.href = roleCreds.dashboard;
+        return false;
+    } else if (email === '' || password === '') {
+        errorDiv.textContent = 'Please enter both email and password';
+        errorDiv.style.display = 'block';
+        return false;
+    } else {
+        errorDiv.innerHTML = 'Invalid credentials for ' + selectedRole + '<br>Try: ' + roleCreds.email + ' / ' + roleCreds.password;
+        errorDiv.style.display = 'block';
+        return false;
+    }
+}
+
+// Check if already logged in
+if (localStorage.getItem('isLoggedIn') === 'true') {
+    const role = localStorage.getItem('userRole');
+    const dashboards = {
+        admin: 'DASHBOARD.HTML',
+        nurse: 'nurse_dashboard.HTML',
+        doctor: 'DASHBOARD.HTML',
+        patient: 'patient_dashboard.HTML'
+    };
+    window.location.href = dashboards[role] || 'DASHBOARD.HTML';
+}
+</script>
+</html>

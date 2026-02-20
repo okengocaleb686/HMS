@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Intervention Tracker - Fall Prevention Management</title>
+    <link rel="stylesheet" href="STYLE.CSS">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #f5f7fa; }
+        .page-container { min-height: 100vh; }
+        .page-header { background: linear-gradient(135deg, #0891b2 0%, #06b6d4 100%); color: white; padding: 25px 40px; }
+        .header-content { display: flex; justify-content: space-between; align-items: center; }
+        .header-title h1 { font-size: 1.8rem; margin-bottom: 5px; display: flex; align-items: center; gap: 12px; }
+        .header-title p { opacity: 0.9; font-size: 0.95rem; }
+        .header-actions { display: flex; gap: 12px; }
+        .btn { padding: 10px 20px; border: none; border-radius: 8px; cursor: pointer; display: flex; align-items: center; gap: 8px; font-size: 0.9rem; transition: all 0.3s; }
+        .btn-primary { background: white; color: #0891b2; }
+        .btn-secondary { background: rgba(255,255,255,0.2); color: white; }
+        .btn:hover { transform: translateY(-2px); }
+        .back-link { display: inline-flex; align-items: center; gap: 8px; color: white; text-decoration: none; padding: 15px 40px; font-size: 0.9rem; background: rgba(0,0,0,0.1); width: 100%; }
+        .back-link:hover { background: rgba(0,0,0,0.2); }
+        .stats-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; padding: 25px 40px; background: white; }
+        .stat-card { padding: 20px; border-radius: 12px; background: #f8f9fa; position: relative; }
+        .stat-card::before { content: ''; position: absolute; top: 0; left: 0; width: 4px; height: 100%; border-radius: 12px 0 0 12px; }
+        .stat-card.cyan::before { background: #0891b2; }
+        .stat-card.green::before { background: #10b981; }
+        .stat-card.orange::before { background: #f59e0b; }
+        .stat-card.blue::before { background: #3b82f6; }
+        .stat-icon { width: 45px; height: 45px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 1.3rem; margin-bottom: 10px; }
+        .stat-icon.cyan { background: rgba(8,145,178,0.1); color: #0891b2; }
+        .stat-icon.green { background: rgba(16,185,129,0.1); color: #10b981; }
+        .stat-icon.orange { background: rgba(245,158,11,0.1); color: #f59e0b; }
+        .stat-icon.blue { background: rgba(59,130,246,0.1); color: #3b82f6; }
+        .stat-value { font-size: 2rem; font-weight: 700; color: #1a1a2e; }
+        .stat-label { font-size: 0.9rem; color: #666; margin-top: 5px; }
+        .filters-bar { padding: 20px 40px; background: white; border-bottom: 1px solid #eee; display: flex; gap: 20px; flex-wrap: wrap; }
+        .filter-group { display: flex; align-items: center; gap: 10px; }
+        .filter-label { font-weight: 500; color: #333; }
+        .filter-select { padding: 10px 15px; border: 1px solid #ddd; border-radius: 6px; font-size: 0.9rem; min-width: 150px; }
+        .main-content { padding: 30px 40px; }
+        .content-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 25px; }
+        .card { background: white; border-radius: 12px; padding: 25px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); }
+        .card-full { grid-column: span 2; }
+        .card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; padding-bottom: 15px; border-bottom: 1px solid #eee; }
+        .card-title { font-size: 1.1rem; color: #1a1a2e; font-weight: 600; }
+        .intervention-card { padding: 20px; background: #f8f9fa; border-radius: 10px; margin-bottom: 15px; border-left: 4px solid #0891b2; }
+        .intervention-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 12px; }
+        .intervention-title { font-weight: 600; color: #1a1a2e; font-size: 1rem; }
+        .intervention-badge { padding: 4px 10px; border-radius: 15px; font-size: 0.75rem; font-weight: 500; }
+        .intervention-badge.active { background: rgba(16,185,129,0.1); color: #10b981; }
+        .intervention-badge.planned { background: rgba(59,130,246,0.1); color: #3b82f6; }
+        .intervention-badge.review { background: rgba(245,158,11,0.1); color: #f59e0b; }
+        .intervention-desc { color: #666; font-size: 0.9rem; margin-bottom: 15px; }
+        .intervention-stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; }
+        .int-stat { text-align: center; padding: 10px; background: white; border-radius: 8px; }
+        .int-stat-value { font-size: 1.3rem; font-weight: 700; color: #0891b2; }
+        .int-stat-label { font-size: 0.75rem; color: #666; }
+        .progress-container { margin-top: 15px; }
+        .progress-header { display: flex; justify-content: space-between; font-size: 0.85rem; margin-bottom: 8px; }
+        .progress-bar { height: 12px; background: #e9ecef; border-radius: 6px; overflow: hidden; }
+        .progress-fill { height: 100%; border-radius: 6px; }
+        .progress-fill.cyan { background: linear-gradient(90deg, #0891b2, #22d3ee); }
+        .progress-fill.green { background: linear-gradient(90deg, #10b981, #34d399); }
+        .progress-fill.orange { background: linear-gradient(90deg, #f59e0b, #fbbf24); }
+        .data-table { width: 100%; border-collapse: collapse; }
+        .data-table th { background: #f8f9fa; padding: 12px; text-align: left; font-weight: 600; color: #666; font-size: 0.8rem; text-transform: uppercase; }
+        .data-table td { padding: 12px; border-bottom: 1px solid #eee; color: #333; }
+        .status-pill { padding: 4px 10px; border-radius: 15px; font-size: 0.75rem; }
+        .status-pill.implemented { background: rgba(16,185,129,0.1); color: #10b981; }
+        .status-pill.in-progress { background: rgba(59,130,246,0.1); color: #3b82f6; }
+        .status-pill.planning { background: rgba(245,158,11,0.1); color: #f59e0b; }
+        .action-btn-small { padding: 6px 12px; background: #f0f0f0; border: none; border-radius: 5px; cursor: pointer; font-size: 0.8rem; }
+        .action-btn-small:hover { background: #0891b2; color: white; }
+        .timeline-box { padding-left: 20px; border-left: 2px solid #e5e7eb; margin-top: 15px; }
+        .timeline-item { position: relative; padding-bottom: 15px; }
+        .timeline-item::before { content: ''; position: absolute; left: -26px; top: 3px; width: 10px; height: 10px; background: #0891b2; border-radius: 50%; }
+        .timeline-date { font-size: 0.75rem; color: #999; }
+        .timeline-text { font-size: 0.85rem; color: #333; margin-top: 4px; }
+    </style>
+</head>
+<body>
+    <div class="page-container">
+        <a href="nurse_dashboard.HTML" class="back-link">
+            <i class="fas fa-arrow-left"></i> Back to Nurse Dashboard
+        </a>
+        
+        <div class="page-header">
+            <div class="header-content">
+                <div class="header-title">
+                    <h1><i class="fas fa-clipboard-check"></i> Intervention Tracker</h1>
+                    <p>Monitor and manage fall prevention interventions across facilities</p>
+                </div>
+                <div class="header-actions">
+                    <button class="btn btn-secondary"><i class="fas fa-download"></i> Export</button>
+                    <button class="btn btn-secondary"><i class="fas fa-chart-line"></i> Reports</button>
+                    <button class="btn btn-primary"><i class="fas fa-plus"></i> New Intervention</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="stats-grid">
+            <div class="stat-card cyan">
+                <div class="stat-icon cyan"><i class="fas fa-list-ul"></i></div>
+                <div class="stat-value">24</div>
+                <div class="stat-label">Active Interventions</div>
+            </div>
+            <div class="stat-card green">
+                <div class="stat-icon green"><i class="fas fa-check-circle"></i></div>
+                <div class="stat-value">86%</div>
+                <div class="stat-label">Effectiveness Rate</div>
+            </div>
+            <div class="stat-card orange">
+                <div class="stat-icon orange"><i class="fas fa-users"></i></div>
+                <div class="stat-value">156</div>
+                <div class="stat-label">Patients on Protocol</div>
+            </div>
+            <div class="stat-card blue">
+                <div class="stat-icon blue"><i class="fas fa-percentage"></i></div>
+                <div class="stat-value">12%</div>
+                <div class="stat-label">Falls Reduction</div>
+            </div>
+        </div>
+
+        <div class="filters-bar">
+            <div class="filter-group">
+                <span class="filter-label">Status:</span>
+                <select class="filter-select">
+                    <option>All Status</option>
+                    <option>Active</option>
+                    <option>In Progress</option>
+                    <option>Planned</option>
+                    <option>Completed</option>
+                </select>
+            </div>
+            <div class="filter-group">
+                <span class="filter-label">Facility:</span>
+                <select class="filter-select">
+                    <option>All Facilities</option>
+                    <option>Central Hospital</option>
+                    <option>Regional Medical</option>
+                    <option>District Hospital</option>
+                </select>
+            </div>
+            <div class="filter-group">
+                <span class="filter-label">Intervention Type:</span>
+                <select class="filter-select">
+                    <option>All Types</option>
+                    <option>Equipment</option>
+                    <option>Process</option>
+                    <option>Training</option>
+                    <option>Environmental</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="main-content">
+            <div class="content-grid">
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">Active Interventions</h3>
+                    </div>
+                    
+                    <div class="intervention-card">
+                        <div class="intervention-header">
+                            <span class="intervention-title">Bed Alarm System Enhancement</span>
+                            <span class="intervention-badge active">Active</span>
+                        </div>
+                        <p class="intervention-desc">Installation of pressure-sensitive bed alarms on all high-risk patient beds in ICU and Medical-Surgical units.</p>
+                        <div class="intervention-stats">
+                            <div class="int-stat">
+                                <div class="int-stat-value">342</div>
+                                <div class="int-stat-label">Patients Covered</div>
+                            </div>
+                            <div class="int-stat">
+                                <div class="int-stat-value">92%</div>
+                                <div class="int-stat-label">Effectiveness</div>
+                            </div>
+                            <div class="int-stat">
+                                <div class="int-stat-value">$18K</div>
+                                <div class="int-stat-label">Cost</div>
+                            </div>
+                        </div>
+                        <div class="progress-container">
+                            <div class="progress-header">
+                                <span>Implementation</span>
+                                <span>100%</span>
+                            </div>
+                            <div class="progress-bar"><div class="progress-fill green" style="width: 100%;"></div></div>
+                        </div>
+                    </div>
+
+                    <div class="intervention-card">
+                        <div class="intervention-header">
+                            <span class="intervention-title">Hourly Rounding Protocol</span>
+                            <span class="intervention-badge active">Active</span>
+                        </div>
+                        <p class="intervention-desc">Standardized hourly rounding schedule with documented patient checks, pain management, and bathroom needs.</p>
+                        <div class="intervention-stats">
+                            <div class="int-stat">
+                                <div class="int-stat-value">485</div>
+                                <div class="int-stat-label">Patients Covered</div>
+                            </div>
+                            <div class="int-stat">
+                                <div class="int-stat-value">88%</div>
+                                <div class="int-stat-label">Effectiveness</div>
+                            </div>
+                            <div class="int-stat">
+                                <div-value">$0</div>
+                                class="int-stat <div class="int-stat-label">Additional Cost</div>
+                            </div>
+                        </div>
+                        <div class="progress-container">
+                            <div class="progress-header">
+                                <span>Implementation</span>
+                                <span>100%</span>
+                            </div>
+                            <div class="progress-bar"><div class="progress-fill green" style="width: 100%;"></div></div>
+                        </div>
+                    </div>
+
+                    <div class="intervention-card">
+                        <div class="intervention-header">
+                            <span class="intervention-title">Non-Slip Footwear Program</span>
+                            <span class="intervention-badge in-progress">In Progress</span>
+                        </div>
+                        <p class="intervention-desc">Distribution of non-slip socks to all at-risk patients upon admission.</p>
+                        <div class="intervention-stats">
+                            <div class="int-stat">
+                                <div class="int-stat-value">215</div>
+                                <div class="int-stat-label">Patients Covered</div>
+                            </div>
+                            <div class="int-stat">
+                                <div class="int-stat-value">85%</div>
+                                <div class="int-stat-label">Effectiveness</div>
+                            </div>
+                            <div class="int-stat">
+                                <div class="int-stat-value">$4.2K</div>
+                                <div class="int-stat-label">Cost</div>
+                            </div>
+                        </div>
+                        <div class="progress-container">
+                            <div class="progress-header">
+                                <span>Implementation</span>
+                                <span>75%</span>
+                            </div>
+                            <div class="progress-bar"><div class="progress-fill cyan" style="width: 75%;"></div></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">Intervention Timeline</h3>
+                    </div>
+                    <div class="timeline-box">
+                        <div class="timeline-item">
+                            <div class="timeline-date">Feb 17, 2026</div>
+                            <div class="timeline-text">Bed alarm system fully implemented at Central Hospital</div>
+                        </div>
+                        <div class="timeline-item">
+                            <div class="timeline-date">Feb 15, 2026</div>
+                            <div class="timeline-text">Hourly rounding compliance increased to 94%</div>
+                        </div>
+                        <div class="timeline-item">
+                            <div class="timeline-date">Feb 12, 2026</div>
+                            <div class="timeline-text">Non-slip footwear program expanded to Regional Medical</div>
+                        </div>
+                        <div class="timeline-item">
+                            <div class="timeline-date">Feb 10, 2026</div>
+                            <div class="timeline-text">New fall risk assessment tool launched</div>
+                        </div>
+                        <div class="timeline-item">
+                            <div class="timeline-date">Feb 8, 2026</div>
+                            <div class="timeline-text">Staff training completed for District Hospital</div>
+                        </div>
+                        <div class="timeline-item">
+                            <div class="timeline-date">Feb 5, 2026</div>
+                            <div class="timeline-text">Environmental modifications completed in Geriatrics unit</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card" style="margin-top: 25px;">
+                <div class="card-header">
+                    <h3 class="card-title">All Interventions Overview</h3>
+                </div>
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Intervention</th>
+                            <th>Type</th>
+                            <th>Facility</th>
+                            <th>Status</th>
+                            <th>Effectiveness</th>
+                            <th>Patients</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>Bed Alarm System</strong></td>
+                            <td>Equipment</td>
+                            <td>All Facilities</td>
+                            <td><span class="status-pill implemented">Implemented</span></td>
+                            <td>92%</td>
+                            <td>342</td>
+                            <td><button class="action-btn-small"><i class="fas fa-eye"></i></button></td>
+                        </tr>
+                        <tr>
+                            <td><strong>Hourly Rounding</strong></td>
+                            <td>Process</td>
+                            <td>All Facilities</td>
+                            <td><span class="status-pill implemented">Implemented</span></td>
+                            <td>88%</td>
+                            <td>485</td>
+                            <td><button class="action-btn-small"><i class="fas fa-eye"></i></button></td>
+                        </tr>
+                        <tr>
+                            <td><strong>Non-Slip Footwear</strong></td>
+                            <td>Equipment</td>
+                            <td>Central, Regional</td>
+                            <td><span class="status-pill in-progress">In Progress</span></td>
+                            <td>85%</td>
+                            <td>215</td>
+                            <td><button class="action-btn-small"><i class="fas fa-eye"></i></button></td>
+                        </tr>
+                        <tr>
+                            <td><strong>Bed Height Protocol</strong></td>
+                            <td>Process</td>
+                            <td>All Facilities</td>
+                            <td><span class="status-pill implemented">Implemented</span></td>
+                            <td>78%</td>
+                            <td>380</td>
+                            <td><button class="action-btn-small"><i class="fas fa-eye"></i></button></td>
+                        </tr>
+                        <tr>
+                            <td><strong>Patient Education Program</strong></td>
+                            <td>Training</td>
+                            <td>District Hospital</td>
+                            <td><span class="status-pill in-progress">In Progress</span></td>
+                            <td>72%</td>
+                            <td>85</td>
+                            <td><button class="action-btn-small"><i class="fas fa-eye"></i></button></td>
+                        </tr>
+                        <tr>
+                            <td><strong>Lighting Improvements</strong></td>
+                            <td>Environmental</td>
+                            <td>District Hospital</td>
+                            <td><span class="status-pill planning">Planning</span></td>
+                            <td>-</td>
+                            <td>0</td>
+                            <td><button class="action-btn-small"><i class="fas fa-eye"></i></button></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,433 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create Account - Hospital Management System</title>
+    <link rel="stylesheet" href="STYLE.CSS">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* Register-specific styles */
+        .register-page {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, #0d6efd 0%, #0a58ca 100%);
+            padding: 20px;
+            position: relative;
+            overflow-x: hidden;
+        }
+        
+        .register-page::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+            animation: rotate 30s linear infinite;
+        }
+        
+        @keyframes rotate {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+        
+        .register-container {
+            position: relative;
+            z-index: 10;
+            width: 100%;
+            max-width: 480px;
+        }
+        
+        .register-card {
+            background: white;
+            border-radius: 20px;
+            padding: 40px 35px;
+            box-shadow: 0 25px 80px rgba(0, 0, 0, 0.35);
+            animation: slideUp 0.6s ease-out;
+        }
+        
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .register-logo {
+            text-align: center;
+            margin-bottom: 25px;
+        }
+        
+        .register-logo img {
+            width: 80px;
+            height: 80px;
+            object-fit: cover;
+            border-radius: 16px;
+            box-shadow: 0 6px 20px rgba(0,0,0,0.15);
+            margin-bottom: 12px;
+        }
+        
+        .register-logo h1 {
+            color: #0d6efd;
+            font-size: 1.5em;
+            font-weight: 700;
+        }
+        
+        .register-logo p {
+            color: #666;
+            font-size: 0.85em;
+            margin-top: 5px;
+        }
+        
+        .register-icon {
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+            margin: 0 auto 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 8px 25px rgba(40, 167, 69, 0.3);
+        }
+        
+        .register-icon i {
+            font-size: 2em;
+            color: white;
+        }
+        
+        .register-card h2 {
+            color: #333;
+            font-size: 1.3em;
+            text-align: center;
+            margin-bottom: 8px;
+        }
+        
+        .register-card > p {
+            color: #666;
+            text-align: center;
+            font-size: 0.9em;
+            margin-bottom: 25px;
+        }
+        
+        .register-form {
+            margin-bottom: 20px;
+        }
+        
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+        
+        .register-form .form-group {
+            margin-bottom: 15px;
+        }
+        
+        .register-form label {
+            display: block;
+            margin-bottom: 6px;
+            color: #333;
+            font-weight: 600;
+            font-size: 0.85em;
+        }
+        
+        .register-form input,
+        .register-form select {
+            width: 100%;
+            padding: 12px 14px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 0.95em;
+            transition: all 0.3s;
+            background: white;
+        }
+        
+        .register-form input:focus,
+        .register-form select:focus {
+            outline: none;
+            border-color: #0d6efd;
+            box-shadow: 0 0 0 3px rgba(13,110,253,0.1);
+        }
+        
+        .register-form input::placeholder {
+            color: #999;
+        }
+        
+        .terms-checkbox {
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            margin-bottom: 20px;
+            padding: 12px;
+            background: #f8f9fa;
+            border-radius: 8px;
+        }
+        
+        .terms-checkbox input {
+            margin-top: 3px;
+        }
+        
+        .terms-checkbox label {
+            font-size: 0.85em;
+            color: #666;
+            line-height: 1.4;
+        }
+        
+        .terms-checkbox a {
+            color: #0d6efd;
+            text-decoration: none;
+        }
+        
+        .terms-checkbox a:hover {
+            text-decoration: underline;
+        }
+        
+        .register-btn {
+            width: 100%;
+            background: linear-gradient(135deg, #0d6efd 0%, #0a58ca 100%);
+            color: white;
+            border: none;
+            padding: 14px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 1em;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            transition: all 0.3s;
+            box-shadow: 0 8px 25px rgba(30, 60, 114, 0.35);
+        }
+        
+        .register-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 35px rgba(30, 60, 114, 0.45);
+        }
+        
+        .register-back {
+            text-align: center;
+            margin-top: 20px;
+        }
+        
+        .register-back a {
+            color: #0d6efd;
+            text-decoration: none;
+            font-size: 0.9em;
+            font-weight: 500;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: color 0.3s;
+        }
+        
+        .register-back a:hover {
+            color: #0a58ca;
+            text-decoration: underline;
+        }
+        
+        .register-divider {
+            display: flex;
+            align-items: center;
+            margin: 20px 0;
+            color: #999;
+            font-size: 0.85em;
+        }
+        
+        .register-divider::before,
+        .register-divider::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background: #e0e0e0;
+        }
+        
+        .register-divider span {
+            padding: 0 15px;
+        }
+        
+        .social-register {
+            display: flex;
+            gap: 12px;
+        }
+        
+        .social-btn {
+            flex: 1;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            background: white;
+            cursor: pointer;
+            font-size: 1.1em;
+            transition: all 0.3s;
+            color: #666;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .social-btn:hover {
+            border-color: #0d6efd;
+            color: #0d6efd;
+            background: rgba(13,110,253,0.05);
+        }
+        
+        .register-features {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 1px solid #f0f0f0;
+        }
+        
+        .register-features .feature {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            color: #999;
+            font-size: 0.75em;
+        }
+        
+        .register-features .feature i {
+            color: #28a745;
+            font-size: 0.9em;
+        }
+        
+        @media (max-width: 480px) {
+            .register-card {
+                padding: 25px 20px;
+            }
+            
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+            
+            .social-register {
+                flex-direction: column;
+            }
+            
+            .register-features {
+                flex-wrap: wrap;
+                gap: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="register-page">
+        <div class="register-container">
+            <div class="register-card">
+                <div class="register-logo">
+                    <img src="IMAGES/HMS.jpg" alt="HMS Logo">
+                    <h1>HMS</h1>
+                    <p>Hospital Management System</p>
+                </div>
+                <div class="register-icon"><i class="fas fa-user-plus"></i></div>
+                <h2><i class="fas fa-clipboard-check"></i> Create Account</h2>
+                <p>Register to access the Hospital Management System</p>
+                <form class="register-form" onsubmit="return createAccount(event)">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label><i class="fas fa-user"></i> First Name</label>
+                            <input type="text" id="firstName" placeholder="First name" required>
+                        </div>
+                        <div class="form-group">
+                            <label><i class="fas fa-user"></i> Last Name</label>
+                            <input type="text" id="lastName" placeholder="Last name" required>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label><i class="fas fa-envelope"></i> Email Address</label>
+                        <input type="email" placeholder="Enter your email" required>
+                    </div>
+                    <div class="form-group">
+                        <label><i class="fas fa-phone"></i> Phone Number</label>
+                        <input type="tel" placeholder="+1 (555) 000-0000">
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label><i class="fas fa-lock"></i> Password</label>
+                            <input type="password" placeholder="Create password" required>
+                        </div>
+                        <div class="form-group">
+                            <label><i class="fas fa-lock"></i> Confirm Password</label>
+                            <input type="password" placeholder="Confirm password" required>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label><i class="fas fa-hospital"></i> Role</label>
+                        <select required>
+                            <option value="">Select your role</option>
+                            <option value="patient">Patient</option>
+                            <option value="doctor">Doctor</option>
+                            <option value="nurse">Nurse</option>
+                            <option value="admin">Administrator</option>
+                        </select>
+                    </div>
+                    <div class="terms-checkbox">
+                        <input type="checkbox" id="terms" required>
+                        <label for="terms">I agree to the <a href="#">Terms of Service</a> and <a href="#">Privacy Policy</a></label>
+                    </div>
+                    <button type="submit" class="register-btn"><i class="fas fa-user-plus"></i> Create Account</button>
+                </form>
+                <div class="register-back">
+                    <a href="LOGIN.HTML"><i class="fas fa-arrow-left"></i> Already have an account? Sign In</a>
+                </div>
+                <div class="register-divider"><span>Or register with</span></div>
+                <div class="social-register">
+                    <button class="social-btn"><i class="fab fa-google"></i></button>
+                    <button class="social-btn"><i class="fab fa-microsoft"></i></button>
+                    <button class="social-btn"><i class="fab fa-apple"></i></button>
+                </div>
+                <div class="register-features">
+                    <div class="feature"><i class="fas fa-shield-alt"></i> Secure</div>
+                    <div class="feature"><i class="fas fa-user-md"></i> HIPAA</div>
+                    <div class="feature"><i class="fas fa-lock"></i> Encrypted</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+<script>
+function createAccount(event) {
+    event.preventDefault();
+    
+    const firstName = document.getElementById('firstName').value;
+    const lastName = document.getElementById('lastName').value;
+    const email = document.getElementById('regEmail').value;
+    const password = document.getElementById('regPassword').value;
+    const confirmPassword = document.getElementById('confirmPassword').value;
+    const errorDiv = document.getElementById('regError');
+    
+    if (password !== confirmPassword) {
+        errorDiv.textContent = 'Passwords do not match!';
+        errorDiv.style.display = 'block';
+        return false;
+    }
+    
+    if (password.length < 6) {
+        errorDiv.textContent = 'Password must be at least 6 characters!';
+        errorDiv.style.display = 'block';
+        return false;
+    }
+    
+    // Save user data
+    localStorage.setItem('userSettings', JSON.stringify({
+        firstName: firstName,
+        lastName: lastName,
+        email: email,
+        phone: ''
+    }));
+    
+    localStorage.setItem('userPassword', password);
+    
+    alert('Account created successfully! Please login with your credentials.');
+    window.location.href = 'LOGIN.HTML';
+    return false;
+}
+</script>
+</html>

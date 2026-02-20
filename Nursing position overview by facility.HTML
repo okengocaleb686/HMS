@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nursing Position Overview by Facility - Hospital Management System</title>
+    <link rel="stylesheet" href="STYLE.CSS">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #f5f7fa; }
+        .page-container { min-height: 100vh; }
+        .page-header { background: linear-gradient(135deg, #0d9488 0%, #14b8a6 100%); color: white; padding: 25px 40px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 4px 15px rgba(13, 148, 136, 0.3); }
+        .header-left h1 { font-size: 1.8rem; margin-bottom: 8px; }
+        .header-left p { opacity: 0.9; font-size: 0.95rem; }
+        .header-actions { display: flex; gap: 15px; }
+        .btn { padding: 10px 20px; border: none; border-radius: 8px; cursor: pointer; display: flex; align-items: center; gap: 8px; font-size: 0.9rem; transition: all 0.3s; }
+        .btn-primary { background: white; color: #0d9488; }
+        .btn-primary:hover { background: #f0fdfa; transform: translateY(-2px); }
+        .btn-secondary { background: rgba(255,255,255,0.2); color: white; }
+        .stats-row { display: grid; grid-template-columns: repeat(5, 1fr); gap: 20px; padding: 25px 40px; background: white; box-shadow: 0 2px 10px rgba(0,0,0,0.05); }
+        .stat-box { text-align: center; padding: 15px; border-radius: 10px; background: #f8f9fa; }
+        .stat-box .value { font-size: 1.8rem; font-weight: 700; color: #0d9488; }
+        .stat-box .label { font-size: 0.85rem; color: #666; margin-top: 5px; }
+        .filters-section { padding: 20px 40px; background: white; border-bottom: 1px solid #eee; }
+        .filters-row { display: flex; gap: 20px; flex-wrap: wrap; align-items: center; }
+        .filter-group { display: flex; align-items: center; gap: 10px; }
+        .filter-label { font-weight: 500; color: #333; }
+        .filter-select { padding: 10px 15px; border: 1px solid #ddd; border-radius: 6px; font-size: 0.9rem; min-width: 180px; background: white; cursor: pointer; }
+        .filter-select:focus { outline: none; border-color: #0d9488; }
+        .search-input { padding: 10px 15px; border: 1px solid #ddd; border-radius: 6px; font-size: 0.9rem; min-width: 250px; }
+        .main-content { padding: 30px 40px; }
+        .table-card { background: white; border-radius: 12px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); overflow: hidden; }
+        .table-header { padding: 20px 25px; border-bottom: 1px solid #eee; display: flex; justify-content: space-between; align-items: center; }
+        .table-title { font-size: 1.2rem; color: #1a1a2e; font-weight: 600; }
+        .table-actions { display: flex; gap: 10px; }
+        .btn-small { padding: 8px 15px; font-size: 0.85rem; border-radius: 6px; }
+        .btn-outline { background: white; border: 1px solid #ddd; color: #333; }
+        .btn-outline:hover { border-color: #0d9488; color: #0d9488; }
+        .data-table { width: 100%; border-collapse: collapse; }
+        .data-table th { background: #f8f9fa; padding: 15px; text-align: left; font-weight: 600; color: #666; font-size: 0.85rem; text-transform: uppercase; border-bottom: 2px solid #eee; }
+        .data-table td { padding: 15px; border-bottom: 1px solid #eee; color: #333; }
+        .data-table tr:hover { background: #f8f9fa; }
+        .facility-name { display: flex; align-items: center; gap: 12px; }
+        .facility-icon { width: 40px; height: 40px; background: linear-gradient(135deg, #0d9488 0%, #14b8a6 100%); border-radius: 10px; display: flex; align-items: center; justify-content: center; color: white; }
+        .status-badge { padding: 5px 12px; border-radius: 20px; font-size: 0.8rem; font-weight: 500; display: inline-block; }
+        .status-badge.active { background: rgba(16,185,129,0.1); color: #10b981; }
+        .status-badge.warning { background: rgba(245,158,11,0.1); color: #f59e0b; }
+        .status-badge.critical { background: rgba(239,68,68,0.1); color: #ef4444; }
+        .progress-cell { width: 150px; }
+        .progress-bar { height: 8px; background: #e9ecef; border-radius: 4px; overflow: hidden; margin-top: 5px; }
+        .progress-fill { height: 100%; border-radius: 4px; transition: width 0.5s; }
+        .progress-fill.green { background: linear-gradient(90deg, #10b981, #34d399); }
+        .progress-fill.yellow { background: linear-gradient(90deg, #f59e0b, #fbbf24); }
+        .progress-fill.red { background: linear-gradient(90deg, #ef4444, #f87171); }
+        .trend-up { color: #10b981; }
+        .trend-down { color: #ef4444; }
+        .action-btn { padding: 6px 12px; background: #f0f0f0; border: none; border-radius: 5px; cursor: pointer; font-size: 0.85rem; transition: all 0.3s; }
+        .action-btn:hover { background: #0d9488; color: white; }
+        .pagination { padding: 20px; display: flex; justify-content: space-between; align-items: center; border-top: 1px solid #eee; }
+        .pagination-info { color: #666; font-size: 0.9rem; }
+        .pagination-buttons { display: flex; gap: 8px; }
+        .page-btn { padding: 8px 14px; border: 1px solid #ddd; background: white; border-radius: 5px; cursor: pointer; transition: all 0.3s; }
+        .page-btn:hover { border-color: #0d9488; color: #0d9488; }
+        .page-btn.active { background: #0d9488; color: white; border-color: #0d9488; }
+        .back-link { display: inline-flex; align-items: center; gap: 8px; color: #666; text-decoration: none; padding: 20px 40px; font-size: 0.9rem; transition: color 0.3s; }
+        .back-link:hover { color: #0d9488; }
+    </style>
+</head>
+<body>
+    <div class="page-container">
+        <a href="nurse_dashboard.HTML" class="back-link">
+            <i class="fas fa-arrow-left"></i> Back to Nurse Dashboard
+        </a>
+        
+        <div class="page-header">
+            <div class="header-left">
+                <h1><i class="fas fa-users"></i> Nursing Position Overview by Facility</h1>
+                <p>Ministry of Health - Complete staffing analysis across all facilities</p>
+            </div>
+            <div class="header-actions">
+                <button class="btn btn-secondary">
+                    <i class="fas fa-download"></i> Export Data
+                </button>
+                <button class="btn btn-primary">
+                    <i class="fas fa-plus"></i> Add Position
+                </button>
+            </div>
+        </div>
+
+        <div class="stats-row">
+            <div class="stat-box">
+                <div class="value">156</div>
+                <div class="label">Total Approved Positions</div>
+            </div>
+            <div class="stat-box">
+                <div class="value">42</div>
+                <div class="label">Open Positions</div>
+            </div>
+            <div class="stat-box">
+                <div class="value">128</div>
+                <div class="label">Filled Positions</div>
+            </div>
+            <div class="stat-box">
+                <div class="value">28</div>
+                <div class="label">Total Vacant</div>
+            </div>
+            <div class="stat-box">
+                <div class="value">18%</div>
+                <div class="label">Vacancy Rate</div>
+            </div>
+        </div>
+
+        <div class="filters-section">
+            <div class="filters-row">
+                <div class="filter-group">
+                    <span class="filter-label">Facility:</span>
+                    <select class="filter-select">
+                        <option>All Facilities</option>
+                        <option>Central Hospital</option>
+                        <option>Regional Medical Center</option>
+                        <option>District Hospital</option>
+                        <option>Community Health Center</option>
+                        <option>Specialty Clinic</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <span class="filter-label">Status:</span>
+                    <select class="filter-select">
+                        <option>All Status</option>
+                        <option>Fully Staffed</option>
+                        <option>Understaffed</option>
+                        <option>Critical</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <span class="filter-label">Unit Type:</span>
+                    <select class="filter-select">
+                        <option>All Units</option>
+                        <option>ICU</option>
+                        <option>Emergency</option>
+                        <option>Medical-Surgical</option>
+                        <option>Pediatrics</option>
+                        <option>Operating Room</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <input type="text" class="search-input" placeholder="Search positions...">
+                </div>
+            </div>
+        </div>
+
+        <div class="main-content">
+            <div class="table-card">
+                <div class="table-header">
+                    <h2 class="table-title">Facility Staffing Details</h2>
+                    <div class="table-actions">
+                        <button class="btn btn-outline btn-small"><i class="fas fa-filter"></i> More Filters</button>
+                        <button class="btn btn-outline btn-small"><i class="fas fa-chart-bar"></i> View Chart</button>
+                    </div>
+                </div>
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Facility</th>
+                            <th>Unit</th>
+                            <th>Approved</th>
+                            <th>Filled</th>
+                            <th>Vacant</th>
+                            <th>Fill Rate</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>
+                                <div class="facility-name">
+                                    <div class="facility-icon"><i class="fas fa-hospital"></i></div>
+                                    <div><strong>Central Hospital</strong><br><span style="font-size: 0.8rem; color: #666;">1,200 beds</span></div>
+                                </div>
+                            </td>
+                            <td>ICU</td>
+                            <td>25</td>
+                            <td>23</td>
+                            <td>2</td>
+                            <td>
+                                <div class="progress-cell">
+                                    <div style="display: flex; justify-content: space-between; font-size: 0.85rem;">
+                                        <span>92%</span>
+                                        <span class="trend-up"><i class="fas fa-arrow-up"></i> 2%</span>
+                                    </div>
+                                    <div class="progress-bar"><div class="progress-fill green" style="width: 92%;"></div></div>
+                                </div>
+                            </td>
+                            <td><span class="status-badge active">On Track</span></td>
+                            <td><button class="action-btn"><i class="fas fa-eye"></i> View</button></td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <div class="facility-name">
+                                    <div class="facility-icon"><i class="fas fa-hospital"></i></div>
+                                    <div><strong>Central Hospital</strong><br><span style="font-size: 0.8rem; color: #666;">1,200 beds</span></div>
+                                </div>
+                            </td>
+                            <td>Emergency</td>
+                            <td>30</td>
+                            <td>26</td>
+                            <td>4</td>
+                            <td>
+                                <div class="progress-cell">
+                                    <div style="display: flex; justify-content: space-between; font-size: 0.85rem;">
+                                        <span>87%</span>
+                                        <span class="trend-down"><i class="fas fa-arrow-down"></i> 3%</span>
+                                    </div>
+                                    <div class="progress-bar"><div class="progress-fill yellow" style="width: 87%;"></div></div>
+                                </div>
+                            </td>
+                            <td><span class="status-badge warning">Attention</span></td>
+                            <td><button class="action-btn"><i class="fas fa-eye"></i> View</button></td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <div class="facility-name">
+                                    <div class="facility-icon"><i class="fas fa-hospital-alt"></i></div>
+                                    <div><strong>Regional Medical Center</strong><br><span style="font-size: 0.8rem; color: #666;">800 beds</span></div>
+                                </div>
+                            </td>
+                            <td>ICU</td>
+                            <td>18</td>
+                            <td>17</td>
+                            <td>1</td>
+                            <td>
+                                <div class="progress-cell">
+                                    <div style="display: flex; justify-content: space-between; font-size: 0.85rem;">
+                                        <span>94%</span>
+                                        <span class="trend-up"><i class="fas fa-arrow-up"></i> 4%</span>
+                                    </div>
+                                    <div class="progress-bar"><div class="progress-fill green" style="width: 94%;"></div></div>
+                                </div>
+                            </td>
+                            <td><span class="status-badge active">On Track</span></td>
+                            <td><button class="action-btn"><i class="fas fa-eye"></i> View</button></td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <div class="facility-name">
+                                    <div class="facility-icon"><i class="fas fa-hospital-alt"></i></div>
+                                    <div><strong>Regional Medical Center</strong><br><span style="font-size: 0.8rem; color: #666;">800 beds</span></div>
+                                </div>
+                            </td>
+                            <td>Medical-Surgical</td>
+                            <td>35</td>
+                            <td>28</td>
+                            <td>7</td>
+                            <td>
+                                <div class="progress-cell">
+                                    <div style="display: flex; justify-content: space-between; font-size: 0.85rem;">
+                                        <span>80%</span>
+                                        <span class="trend-down"><i class="fas fa-arrow-down"></i> 5%</span>
+                                    </div>
+                                    <div class="progress-bar"><div class="progress-fill yellow" style="width: 80%;"></div></div>
+                                </div>
+                            </td>
+                            <td><span class="status-badge warning">Attention</span></td>
+                            <td><button class="action-btn"><i class="fas fa-eye"></i> View</button></td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <div class="facility-name">
+                                    <div class="facility-icon"><i class="fas fa-clinic-medical"></i></div>
+                                    <div><strong>District Hospital</strong><br><span style="font-size: 0.8rem; color: #666;">200 beds</span></div>
+                                </div>
+                            </td>
+                            <td>General Ward</td>
+                            <td>20</td>
+                            <td>14</td>
+                            <td>6</td>
+                            <td>
+                                <div class="progress-cell">
+                                    <div style="display: flex; justify-content: space-between; font-size: 0.85rem;">
+                                        <span>70%</span>
+                                        <span class="trend-down"><i class="fas fa-arrow-down"></i> 8%</span>
+                                    </div>
+                                    <div class="progress-bar"><div class="progress-fill red" style="width: 70%;"></div></div>
+                                </div>
+                            </td>
+                            <td><span class="status-badge critical">Critical</span></td>
+                            <td><button class="action-btn"><i class="fas fa-eye"></i> View</button></td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <div class="facility-name">
+                                    <div class="facility-icon"><i class="fas fa-clinic-medical"></i></div>
+                                    <div><strong>District Hospital</strong><br><span style="font-size: 0.8rem; color: #666;">200 beds</span></div>
+                                </div>
+                            </td>
+                            <td>Emergency</td>
+                            <td>15</td>
+                            <td>12</td>
+                            <td>3</td>
+                            <td>
+                                <div class="progress-cell">
+                                    <div style="display: flex; justify-content: space-between; font-size: 0.85rem;">
+                                        <span>80%</span>
+                                        <span class="trend-up"><i class="fas fa-arrow-up"></i> 2%</span>
+                                    </div>
+                                    <div class="progress-bar"><div class="progress-fill yellow" style="width: 80%;"></div></div>
+                                </div>
+                            </td>
+                            <td><span class="status-badge warning">Attention</span></td>
+                            <td><button class="action-btn"><i class="fas fa-eye"></i> View</button></td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <div class="facility-name">
+                                    <div class="facility-icon"><i class="fas fa-prescription"></i></div>
+                                    <div><strong>Community Health Center</strong><br><span style="font-size: 0.8rem; color: #666;">50 beds</span></div>
+                                </div>
+                            </td>
+                            <td>Outpatient</td>
+                            <td>12</td>
+                            <td>10</td>
+                            <td>2</td>
+                            <td>
+                                <div class="progress-cell">
+                                    <div style="display: flex; justify-content: space-between; font-size: 0.85rem;">
+                                        <span>83%</span>
+                                        <span class="trend-up"><i class="fas fa-arrow-up"></i> 3%</span>
+                                    </div>
+                                    <div class="progress-bar"><div class="progress-fill green" style="width: 83%;"></div></div>
+                                </div>
+                            </td>
+                            <td><span class="status-badge active">On Track</span></td>
+                            <td><button class="action-btn"><i class="fas fa-eye"></i> View</button></td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <div class="facility-name">
+                                    <div class="facility-icon"><i class="fas fa-stethoscope"></i></div>
+                                    <div><strong>Specialty Clinic</strong><br><span style="font-size: 0.8rem; color: #666;">30 beds</span></div>
+                                </div>
+                            </td>
+                            <td>Day Care</td>
+                            <td>15</td>
+                            <td>14</td>
+                            <td>1</td>
+                            <td>
+                                <div class="progress-cell">
+                                    <div style="display: flex; justify-content: space-between; font-size: 0.85rem;">
+                                        <span>93%</span>
+                                        <span class="trend-up"><i class="fas fa-arrow-up"></i> 1%</span>
+                                    </div>
+                                    <div class="progress-bar"><div class="progress-fill green" style="width: 93%;"></div></div>
+                                </div>
+                            </td>
+                            <td><span class="status-badge active">On Track</span></td>
+                            <td><button class="action-btn"><i class="fas fa-eye"></i> View</button></td>
+                        </tr>
+                    </tbody>
+                </table>
+                <div class="pagination">
+                    <div class="pagination-info">Showing 1-8 of 24 entries</div>
+                    <div class="pagination-buttons">
+                        <button class="page-btn"><i class="fas fa-chevron-left"></i></button>
+                        <button class="page-btn active">1</button>
+                        <button class="page-btn">2</button>
+                        <button class="page-btn">3</button>
+                        <button class="page-btn"><i class="fas fa-chevron-right"></i></button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

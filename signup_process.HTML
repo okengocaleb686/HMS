@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Processing Signup - Hospital Management System</title>
+    <link rel="stylesheet" href="STYLE.CSS">
+    <style>
+        .message-box {
+            text-align: center;
+            padding: 40px;
+        }
+        .success-message {
+            color: #28a745;
+        }
+        .error-message {
+            color: #dc3545;
+        }
+        .loader {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #1e3c72;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+            margin: 20px auto;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        .redirect-info {
+            margin-top: 20px;
+            color: #666;
+        }
+    </style>
+</head>
+<body>
+    <div class="login-container">
+        <div class="login-box">
+            <div class="message-box">
+                <div class="loader"></div>
+                
+                <?php
+                // Process signup form
+                if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+                    // Get form data
+                    $fullname = trim($_POST['fullname'] ?? '');
+                    $email = trim($_POST['email'] ?? '');
+                    $username = trim($_POST['username'] ?? '');
+                    $password = $_POST['password'] ?? '';
+                    $confirm_password = $_POST['confirm_password'] ?? '';
+                    $role = $_POST['role'] ?? '';
+                    
+                    // Validate inputs
+                    $errors = [];
+                    
+                    if (empty($fullname)) {
+                        $errors[] = "Full name is required";
+                    }
+                    
+                    if (empty($email)) {
+                        $errors[] = "Email is required";
+                    } elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+                        $errors[] = "Invalid email format";
+                    }
+                    
+                    if (empty($username)) {
+                        $errors[] = "Username is required";
+                    }
+                    
+                    if (empty($password)) {
+                        $errors[] = "Password is required";
+                    } elseif (strlen($password) < 6) {
+                        $errors[] = "Password must be at least 6 characters";
+                    }
+                    
+                    if ($password !== $confirm_password) {
+                        $errors[] = "Passwords do not match";
+                    }
+                    
+                    if (empty($role)) {
+                        $errors[] = "Please select an account type";
+                    }
+                    
+                    // Check if username already exists
+                    $users_file = '../data/users.json';
+                    if (file_exists($users_file)) {
+                        $users_data = json_decode(file_get_contents($users_file), true);
+                        foreach ($users_data as $user) {
+                            if ($user['username'] === $username) {
+                                $errors[] = "Username already exists";
+                                break;
+                            }
+                            if ($user['email'] === $email) {
+                                $errors[] = "Email already registered";
+                                break;
+                            }
+                        }
+                    }
+                    
+                    // If no errors, save user
+                    if (empty($errors)) {
+                        $new_user = [
+                            'id' => time(),
+                            'fullname' => $fullname,
+                            'email' => $email,
+                            'username' => $username,
+                            'password' => password_hash($password, PASSWORD_DEFAULT),
+                            'role' => $role,
+                            'created_at' => date('Y-m-d H:i:s')
+                        ];
+                        
+                        // Load existing users or create new array
+                        $users = [];
+                        if (file_exists($users_file)) {
+                            $users = json_decode(file_get_contents($users_file), true);
+                        }
+                        
+                        $users[] = $new_user;
+                        
+                        if (file_put_contents($users_file, json_encode($users, JSON_PRETTY_PRINT))) {
+                            echo '<div class="success-message">';
+                            echo '<h2>Account Created Successfully!</h2>';
+                            echo '<p>Welcome, ' . htmlspecialchars($fullname) . '</p>';
+                            echo '<p>Your ' . ucfirst($role) . ' account has been created.</p>';
+                            echo '</div>';
+                            echo '<meta http-equiv="refresh" content="3;url=LOGIN.HTML">';
+                            echo '<p class="redirect-info">Redirecting to login page in 3 seconds...</p>';
+                        } else {
+                            echo '<div class="error-message">';
+                            echo '<h2>Registration Failed</h2>';
+                            echo '<p>Unable to save your account. Please try again.</p>';
+                            echo '</div>';
+                            echo '<meta http-equiv="refresh" content="3;url=CREATE ACCOUNT.HTML">';
+                        }
+                    } else {
+                        // Display errors
+                        echo '<div class="error-message">';
+                        echo '<h2>Registration Failed</h2>';
+                        echo '<ul style="text-align: left; display: inline-block;">';
+                        foreach ($errors as $error) {
+                            echo '<li>' . htmlspecialchars($error) . '</li>';
+                        }
+                        echo '</ul>';
+                        echo '</div>';
+                        echo '<meta http-equiv="refresh" content="5;url=CREATE ACCOUNT.HTML">';
+                        echo '<p class="redirect-info">Redirecting back to signup in 5 seconds...</p>';
+                    }
+                } else {
+                    // Invalid request
+                    echo '<div class="error-message">';
+                    echo '<h2>Invalid Request</h2>';
+                    echo '<p>Please submit the signup form properly.</p>';
+                    echo '</div>';
+                    echo '<meta http-equiv="refresh" content="3;url=CREATE ACCOUNT.HTML">';
+                }
+                ?>
+                
+                <div class="login-footer">
+                    <p><a href="LOGIN.HTML">Go to Login</a></p>
+                    <p><a href="CREATE ACCOUNT.HTML">Back to Signup</a></p>
+                    <p class="system-info">HMS 2026 | Hospital Management System</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

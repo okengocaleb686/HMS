@@ -1,0 +1,514 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Messages - Patient Dashboard</title>
+    <link rel="stylesheet" href="STYLE.CSS">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .messages-container {
+            display: grid;
+            grid-template-columns: 300px 1fr;
+            gap: 20px;
+            height: calc(100vh - 180px);
+        }
+        
+        .conversations-list {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .conversations-header {
+            padding: 20px;
+            border-bottom: 1px solid #f0f0f0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .conversations-header h3 {
+            margin: 0;
+            color: #333;
+            font-size: 1.1rem;
+        }
+        
+        .new-message-btn {
+            width: 36px;
+            height: 36px;
+            background: var(--primary-gradient);
+            border: none;
+            border-radius: 50%;
+            color: white;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s;
+        }
+        
+        .new-message-btn:hover {
+            transform: scale(1.1);
+        }
+        
+        .search-conversations {
+            padding: 15px 20px;
+            border-bottom: 1px solid #f0f0f0;
+        }
+        
+        .search-conversations input {
+            width: 100%;
+            padding: 10px 15px;
+            padding-left: 35px;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            background: #f8f9fa;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%23999'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: 10px center;
+            background-size: 16px;
+        }
+        
+        .search-conversations input:focus {
+            outline: none;
+            border-color: var(--primary-dark);
+            background: white;
+        }
+        
+        .conversations {
+            flex: 1;
+            overflow-y: auto;
+        }
+        
+        .conversation-item {
+            display: flex;
+            gap: 12px;
+            padding: 15px 20px;
+            cursor: pointer;
+            transition: all 0.3s;
+            border-bottom: 1px solid #f5f5f5;
+        }
+        
+        .conversation-item:hover {
+            background: #f8f9fa;
+        }
+        
+        .conversation-item.active {
+            background: rgba(30, 60, 114, 0.08);
+            border-left: 3px solid var(--primary-dark);
+        }
+        
+        .conversation-avatar {
+            width: 45px;
+            height: 45px;
+            background: var(--primary-gradient);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+            flex-shrink: 0;
+        }
+        
+        .conversation-info {
+            flex: 1;
+            min-width: 0;
+        }
+        
+        .conversation-name {
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 4px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .conversation-time {
+            font-size: 0.75rem;
+            color: #999;
+            font-weight: 400;
+        }
+        
+        .conversation-preview {
+            font-size: 0.85rem;
+            color: #666;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        
+        .unread-badge {
+            background: #dc3545;
+            color: white;
+            font-size: 0.7rem;
+            padding: 2px 8px;
+            border-radius: 10px;
+            font-weight: 600;
+        }
+        
+        .chat-area {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+        
+        .chat-header {
+            padding: 20px;
+            border-bottom: 1px solid #f0f0f0;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .chat-header-info h3 {
+            margin: 0 0 4px 0;
+            color: #333;
+            font-size: 1.1rem;
+        }
+        
+        .chat-header-info p {
+            margin: 0;
+            font-size: 0.85rem;
+            color: #28a745;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        
+        .chat-header-info p::before {
+            content: '';
+            width: 8px;
+            height: 8px;
+            background: #28a745;
+            border-radius: 50%;
+        }
+        
+        .chat-messages {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+        
+        .message {
+            max-width: 70%;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .message.sent {
+            align-self: flex-end;
+        }
+        
+        .message.received {
+            align-self: flex-start;
+        }
+        
+        .message-bubble {
+            padding: 12px 16px;
+            border-radius: 18px;
+            font-size: 0.95rem;
+            line-height: 1.5;
+        }
+        
+        .message.sent .message-bubble {
+            background: var(--primary-gradient);
+            color: white;
+            border-bottom-right-radius: 4px;
+        }
+        
+        .message.received .message-bubble {
+            background: #f0f2f5;
+            color: #333;
+            border-bottom-left-radius: 4px;
+        }
+        
+        .message-time {
+            font-size: 0.7rem;
+            color: #999;
+            margin-top: 4px;
+            padding: 0 8px;
+        }
+        
+        .message.sent .message-time {
+            text-align: right;
+        }
+        
+        .chat-input {
+            padding: 20px;
+            border-top: 1px solid #f0f0f0;
+            display: flex;
+            gap: 12px;
+            align-items: center;
+        }
+        
+        .chat-input input {
+            flex: 1;
+            padding: 12px 18px;
+            border: 1px solid #e0e0e0;
+            border-radius: 25px;
+            font-size: 0.95rem;
+        }
+        
+        .chat-input input:focus {
+            outline: none;
+            border-color: var(--primary-dark);
+        }
+        
+        .chat-input button {
+            width: 45px;
+            height: 45px;
+            background: var(--primary-gradient);
+            border: none;
+            border-radius: 50%;
+            color: white;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.1rem;
+            transition: all 0.3s;
+        }
+        
+        .chat-input button:hover {
+            transform: scale(1.1);
+        }
+        
+        .attachment-btn {
+            width: 45px;
+            height: 45px;
+            background: #f0f2f5;
+            border: none;
+            border-radius: 50%;
+            color: #666;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.1rem;
+            transition: all 0.3s;
+        }
+        
+        .attachment-btn:hover {
+            background: #e0e0e0;
+        }
+        
+        .empty-chat {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            color: #999;
+        }
+        
+        .empty-chat-icon {
+            width: 100px;
+            height: 100px;
+            background: #f8f9fa;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.5rem;
+            color: #ccc;
+            margin-bottom: 20px;
+        }
+        
+        .date-divider {
+            text-align: center;
+            margin: 10px 0;
+            position: relative;
+        }
+        
+        .date-divider span {
+            background: white;
+            padding: 0 15px;
+            font-size: 0.8rem;
+            color: #999;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .date-divider::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: #e0e0e0;
+        }
+    </style>
+</head>
+<body>
+    <div class="dashboard-container">
+        <div class="sidebar">
+            <div class="sidebar-header">
+                <img src="IMAGES/HMS.jpg" alt="HMS Logo">
+                <p>Hospital Management</p>
+            </div>
+            <ul class="sidebar-menu">
+                <li><a href="patient_dashboard.HTML"><i class="fas fa-tachometer-alt"></i> <span>Dashboard</span></a></li>
+                <li><a href="appointments.HTML"><i class="fas fa-calendar-check"></i> <span>Appointments</span></a></li>
+                <li><a href="patients.HTML"><i class="fas fa-user-injured"></i> <span>Medical Records</span></a></li>
+                <li><a href="billing.HTML"><i class="fas fa-file-invoice-dollar"></i> <span>Billing</span></a></li>
+                <li><a href="prescriptions.HTML"><i class="fas fa-prescription"></i> <span>Prescriptions</span></a></li>
+                <li class="active"><a href="messages.HTML"><i class="fas fa-envelope"></i> <span>Messages</span></a></li>
+                <li><a href="settings.HTML"><i class="fas fa-cog"></i> <span>Settings</span></a></li>
+                <li><a href="LOGOUT.HTML"><i class="fas fa-sign-out-alt"></i> <span>Logout</span></a></li>
+            </ul>
+        </div>
+        <div class="main-content">
+            <div class="header">
+                <h1><i class="fas fa-envelope"></i> Messages</h1>
+                <div class="user-info">
+                    <div id="dashboard-avatar" class="avatar"><i class="fas fa-user"></i></div>
+                    <span id="dashboard-username">John Doe</span>
+                </div>
+            </div>
+            
+            <div class="messages-container">
+                <!-- Conversations List -->
+                <div class="conversations-list">
+                    <div class="conversations-header">
+                        <h3><i class="fas fa-comments"></i> Conversations</h3>
+                        <button class="new-message-btn"><i class="fas fa-plus"></i></button>
+                    </div>
+                    <div class="search-conversations">
+                        <input type="text" placeholder="Search messages...">
+                    </div>
+                    <div class="conversations">
+                        <div class="conversation-item active">
+                            <div class="conversation-avatar">JS</div>
+                            <div class="conversation-info">
+                                <div class="conversation-name">
+                                    Dr. John Smith
+                                    <span class="conversation-time">10:30 AM</span>
+                                </div>
+                                <div class="conversation-preview">Your test results are ready. Please review them.</div>
+                            </div>
+                        </div>
+                        <div class="conversation-item">
+                            <div class="conversation-avatar" style="background: linear-gradient(135deg, #28a745 0%, #20c997 100%);">SJ</div>
+                            <div class="conversation-info">
+                                <div class="conversation-name">
+                                    Dr. Sarah Johnson
+                                    <span class="conversation-time">Yesterday</span>
+                                </div>
+                                <div class="conversation-preview">Thank you for the follow-up visit. Take care!</div>
+                            </div>
+                        </div>
+                        <div class="conversation-item">
+                            <div class="conversation-avatar" style="background: linear-gradient(135deg, #ff9800 0%, #ffc107 100%);">EL</div>
+                            <div class="conversation-info">
+                                <div class="conversation-name">
+                                    Dr. Emily Lee
+                                    <span class="conversation-time">Feb 14</span>
+                                </div>
+                                <div class="conversation-preview">Your prescription has been renewed.</div>
+                            </div>
+                        </div>
+                        <div class="conversation-item">
+                            <div class="conversation-avatar" style="background: linear-gradient(135deg, #6c757d 0%, #495057 100%);">AD</div>
+                            <div class="conversation-info">
+                                <div class="conversation-name">
+                                    Admin Desk
+                                    <span class="conversation-time">Feb 10</span>
+                                </div>
+                                <div class="conversation-preview">Welcome to Hospital Management System!</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Chat Area -->
+                <div class="chat-area">
+                    <div class="chat-header">
+                        <div class="conversation-avatar">JS</div>
+                        <div class="chat-header-info">
+                            <h3>Dr. John Smith</h3>
+                            <p>Cardiology Specialist • Online</p>
+                        </div>
+                        <div style="margin-left: auto; display: flex; gap: 10px;">
+                            <button style="width: 40px; height: 40px; background: #f0f2f5; border: none; border-radius: 50%; cursor: pointer; color: #666;"><i class="fas fa-phone"></i></button>
+                            <button style="width: 40px; height: 40px; background: #f0f2f5; border: none; border-radius: 50%; cursor: pointer; color: #666;"><i class="fas fa-video"></i></button>
+                            <button style="width: 40px; height: 40px; background: #f0f2f5; border: none; border-radius: 50%; cursor: pointer; color: #666;"><i class="fas fa-ellipsis-v"></i></button>
+                        </div>
+                    </div>
+                    
+                    <div class="chat-messages">
+                        <div class="date-divider"><span>Today</span></div>
+                        
+                        <div class="message received">
+                            <div class="message-bubble">Hello John, I wanted to follow up on your recent visit. How are you feeling?</div>
+                            <div class="message-time">09:15 AM</div>
+                        </div>
+                        
+                        <div class="message sent">
+                            <div class="message-bubble">Hi Dr. Smith, thank you for checking in. I've been feeling much better since starting the new medication.</div>
+                            <div class="message-time">09:22 AM</div>
+                        </div>
+                        
+                        <div class="message received">
+                            <div class="message-bubble">That's great to hear! I've reviewed your latest test results and everything looks good. Your cholesterol levels have improved significantly.</div>
+                            <div class="message-time">09:45 AM</div>
+                        </div>
+                        
+                        <div class="message received">
+                            <div class="message-bubble">Your test results are ready. Please review them at your earliest convenience. Keep up the good work with your diet and exercise routine!</div>
+                            <div class="message-time">10:30 AM</div>
+                        </div>
+                        
+                        <div class="message sent">
+                            <div class="message-bubble">Thank you so much, Doctor! I'm relieved to hear the good news. Should I schedule a follow-up appointment?</div>
+                            <div class="message-time">10:35 AM</div>
+                        </div>
+                    </div>
+                    
+                    <div class="chat-input">
+                        <button class="attachment-btn"><i class="fas fa-paperclip"></i></button>
+                        <input type="text" placeholder="Type your message...">
+                        <button><i class="fas fa-paper-plane"></i></button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+<script>
+window.onload = function() {
+    // Load saved profile photo
+    const savedPhoto = localStorage.getItem('profilePhoto');
+    if (savedPhoto) {
+        const dashboardAvatar = document.getElementById('dashboard-avatar');
+        if (dashboardAvatar) {
+            dashboardAvatar.innerHTML = '<img src="' + savedPhoto + '" style="width: 100%; height: 100%; object-fit: cover; border-radius: 50%;">';
+        }
+    }
+    
+    // Load saved username
+    const savedSettings = localStorage.getItem('userSettings');
+    if (savedSettings) {
+        const settings = JSON.parse(savedSettings);
+        const fullName = settings.firstName + ' ' + settings.lastName;
+        const usernameEl = document.getElementById('dashboard-username');
+        if (usernameEl) {
+            usernameEl.textContent = fullName;
+        }
+    }
+};
+</script>
+</html>

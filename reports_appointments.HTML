@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Appointments Scheduling Report - Hospital Management System</title>
+    <link rel="stylesheet" href="STYLE.CSS">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div class="dashboard-container">
+        <div class="sidebar">
+            <div class="sidebar-header">
+                <img src="IMAGES/HMS.jpg" alt="HMS Logo">
+                <p>Hospital Management</p>
+            </div>
+            <ul class="sidebar-menu">
+                <li><a href="DASHBOARD.HTML"><i class="fas fa-tachometer-alt"></i> <span>Dashboard</span></a></li>
+                <li><a href="patients.HTML"><i class="fas fa-user-injured"></i> <span>Patients</span></a></li>
+                <li><a href="doctors.HTML"><i class="fas fa-user-md"></i> <span>Doctors</span></a></li>
+                <li><a href="appointments.HTML"><i class="fas fa-calendar-check"></i> <span>Appointments</span></a></li>
+                <li><a href="departments.HTML"><i class="fas fa-hospital"></i> <span>Departments</span></a></li>
+                <li><a href="billing.HTML"><i class="fas fa-file-invoice-dollar"></i> <span>Billing</span></a></li>
+                <li class="active"><a href="reports.HTML"><i class="fas fa-chart-line"></i> <span>Reports</span></a></li>
+                <li><a href="settings.HTML"><i class="fas fa-cog"></i> <span>Settings</span></a></li>
+                <li><a href="LOGOUT.HTML"><i class="fas fa-sign-out-alt"></i> <span>Logout</span></a></li>
+            </ul>
+        </div>
+        <div class="main-content">
+            <div class="header">
+                <h1><i class="fas fa-calendar"></i> Appointments Scheduling Report</h1>
+                <div class="user-info">
+                    <div id="dashboard-avatar" class="avatar"><i class="fas fa-user"></i></div>
+                    <span id="dashboard-username">Admin User</span>
+                </div>
+            </div>
+            
+            <div style="display: grid; grid-template-columns: 220px 1fr; gap: 20px;">
+                <div style="background: white; border-radius: 12px; padding: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.08); height: fit-content;">
+                    <div style="padding: 12px; background: var(--primary-gradient); color: white; border-radius: 8px; margin-bottom: 10px; display: flex; align-items: center; gap: 10px; font-size: 0.9em;"><i class="fas fa-chart-bar"></i> Available Reports</div>
+                    <div style="padding: 12px; color: #666; border-radius: 8px; display: flex; align-items: center; gap: 10px; font-size: 0.9em; cursor: pointer;" onclick="window.location.href='reports.HTML'"><i class="fas fa-list"></i> Overview</div>
+                    <div style="padding: 12px; color: #666; border-radius: 8px; display: flex; align-items: center; gap: 10px; font-size: 0.9em; cursor: pointer;" onclick="window.location.href='reports_patients.HTML'"><i class="fas fa-users"></i> Patients</div>
+                    <div style="padding: 12px; background: var(--primary-gradient); color: white; border-radius: 8px; margin-bottom: 10px; display: flex; align-items: center; gap: 10px; font-size: 0.9em;"><i class="fas fa-calendar"></i> Appointments</div>
+                    <div style="padding: 12px; color: #666; border-radius: 8px; display: flex; align-items: center; gap: 10px; font-size: 0.9em; cursor: pointer;" onclick="window.location.href='reports_financial.HTML'"><i class="fas fa-dollar-sign"></i> Financial</div>
+                    <div style="padding: 12px; color: #666; border-radius: 8px; display: flex; align-items: center; gap: 10px; font-size: 0.9em; cursor: pointer;" onclick="window.location.href='reports_doctors.HTML'"><i class="fas fa-user-md"></i> Doctors</div>
+                </div>
+                
+                <div style="display: flex; flex-direction: column; gap: 20px;">
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px;">
+                        <div class="stat-card" style="position: relative; overflow: hidden;">
+                            <div style="position: absolute; top: 0; left: 0; width: 4px; height: 100%; background: var(--primary-dark);"></div>
+                            <div class="icon" style="background: rgba(30,60,114,0.1); color: var(--primary-dark);"><i class="fas fa-calendar-check"></i></div>
+                            <div class="value">486</div>
+                            <div class="label">Total Appointments</div>
+                        </div>
+                        <div class="stat-card" style="position: relative; overflow: hidden;">
+                            <div style="position: absolute; top: 0; left: 0; width: 4px; height: 100%; background: #28a745;"></div>
+                            <div class="icon" style="background: rgba(40,167,69,0.1); color: #28a745;"><i class="fas fa-check-circle"></i></div>
+                            <div class="value">324</div>
+                            <div class="label">Completed</div>
+                        </div>
+                        <div class="stat-card" style="position: relative; overflow: hidden;">
+                            <div style="position: absolute; top: 0; left: 0; width: 4px; height: 100%; background: #ff9800;"></div>
+                            <div class="icon" style="background: rgba(255,152,0,0.1); color: #ff9800;"><i class="fas fa-clock"></i></div>
+                            <div class="value">98</div>
+                            <div class="label">Pending</div>
+                        </div>
+                        <div class="stat-card" style="position: relative; overflow: hidden;">
+                            <div style="position: absolute; top: 0; left: 0; width: 4px; height: 100%; background: #dc3545;"></div>
+                            <div class="icon" style="background: rgba(220,53,69,0.1); color: #dc3545;"><i class="fas fa-times-circle"></i></div>
+                            <div class="value">64</div>
+                            <div class="label">Cancelled</div>
+                        </div>
+                    </div>
+                    
+                    <div style="background: white; border-radius: 12px; padding: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.08);">
+                        <h3 style="color: var(--primary-dark); margin-bottom: 15px;">Appointments by Status</h3>
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>Status</th>
+                                    <th>Count</th>
+                                    <th>Percentage</th>
+                                    <th>Change from Last Month</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><span class="status confirmed">Completed</span></td>
+                                    <td>324</td>
+                                    <td>66.7%</td>
+                                    <td style="color: #28a745;">+12.3%</td>
+                                </tr>
+                                <tr>
+                                    <td><span class="status pending">Pending</span></td>
+                                    <td>98</td>
+                                    <td>20.2%</td>
+                                    <td style="color: #28a745;">+5.8%</td>
+                                </tr>
+                                <tr>
+                                    <td><span class="status cancelled">Cancelled</span></td>
+                                    <td>64</td>
+                                    <td>13.2%</td>
+                                    <td style="color: #dc3545;">-3.2%</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    
+                    <div style="background: white; border-radius: 12px; padding: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.08);">
+                        <h3 style="color: var(--primary-dark); margin-bottom: 15px;">Weekly Appointment Trends</h3>
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>Day</th>
+                                    <th>Scheduled</th>
+                                    <th>Completed</th>
+                                    <th>Cancelled</th>
+                                    <th>Completion Rate</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>Monday</td>
+                                    <td>98</td>
+                                    <td>72</td>
+                                    <td>26</td>
+                                    <td>73.5%</td>
+                                </tr>
+                                <tr>
+                                    <td>Tuesday</td>
+                                    <td>112</td>
+                                    <td>89</td>
+                                    <td>23</td>
+                                    <td>79.5%</td>
+                                </tr>
+                                <tr>
+                                    <td>Wednesday</td>
+                                    <td>105</td>
+                                    <td>81</td>
+                                    <td>24</td>
+                                    <td>77.1%</td>
+                                </tr>
+                                <tr>
+                                    <td>Thursday</td>
+                                    <td>89</td>
+                                    <td>68</td>
+                                    <td>21</td>
+                                    <td>76.4%</td>
+                                </tr>
+                                <tr>
+                                    <td>Friday</td>
+                                    <td>82</td>
+                                    <td>14</td>
+                                    <td>68</td>
+                                    <td>17.1%</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+<script>
+window.onload = function() {
+    const savedPhoto = localStorage.getItem('profilePhoto');
+    if (savedPhoto) {
+        const dashboardAvatar = document.getElementById('dashboard-avatar');
+        if (dashboardAvatar) {
+            dashboardAvatar.innerHTML = '<img src="' + savedPhoto + '" style="width: 100%; height: 100%; object-fit: cover; border-radius: 50%;">';
+        }
+    }
+    const savedSettings = localStorage.getItem('userSettings');
+    if (savedSettings) {
+        const settings = JSON.parse(savedSettings);
+        const fullName = settings.firstName + ' ' + settings.lastName;
+        const usernameEl = document.getElementById('dashboard-username');
+        if (usernameEl) usernameEl.textContent = fullName;
+    }
+};
+</script>
+</html>

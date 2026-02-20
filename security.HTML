@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Security Settings - Hospital Management System</title>
+    <link rel="stylesheet" href="STYLE.CSS">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div class="dashboard-container">
+        <div class="sidebar">
+            <div class="sidebar-header">
+                <img src="IMAGES/HMS.jpg" alt="HMS Logo">
+                <p>Hospital Management</p>
+            </div>
+            <ul class="sidebar-menu">
+                <li><a href="DASHBOARD.HTML"><i class="fas fa-tachometer-alt"></i> <span>Dashboard</span></a></li>
+                <li><a href="patients.HTML"><i class="fas fa-user-injured"></i> <span>Patients</span></a></li>
+                <li><a href="doctors.HTML"><i class="fas fa-user-md"></i> <span>Doctors</span></a></li>
+                <li><a href="appointments.HTML"><i class="fas fa-calendar-check"></i> <span>Appointments</span></a></li>
+                <li><a href="departments.HTML"><i class="fas fa-hospital"></i> <span>Departments</span></a></li>
+                <li><a href="billing.HTML"><i class="fas fa-file-invoice-dollar"></i> <span>Billing</span></a></li>
+                <li><a href="reports.HTML"><i class="fas fa-chart-line"></i> <span>Reports</span></a></li>
+                <li class="active"><a href="settings.HTML"><i class="fas fa-cog"></i> <span>Settings</span></a></li>
+                <li><a href="LOGOUT.HTML"><i class="fas fa-sign-out-alt"></i> <span>Logout</span></a></li>
+            </ul>
+        </div>
+        <div class="main-content">
+            <div class="header">
+                <h1><i class="fas fa-shield-alt"></i> Security Settings</h1>
+                <div class="user-info">
+                    <div id="dashboard-avatar" class="avatar"><i class="fas fa-user"></i></div>
+                    <span id="dashboard-username">Admin User</span>
+                </div>
+            </div>
+            <div style="display: grid; grid-template-columns: 220px 1fr; gap: 20px;">
+                <div style="background: white; border-radius: 12px; padding: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.08); height: fit-content;">
+                    <div style="padding: 12px; color: #666; border-radius: 8px; display: flex; align-items: center; gap: 10px; font-size: 0.9em; cursor: pointer;" onclick="window.location.href='settings.HTML'"><i class="fas fa-user"></i> Profile</div>
+                    <div style="padding: 12px; color: #666; border-radius: 8px; display: flex; align-items: center; gap: 10px; font-size: 0.9em; cursor: pointer;" onclick="window.location.href='hospital.HTML'"><i class="fas fa-hospital"></i> Hospital</div>
+                    <div style="padding: 12px; color: #666; border-radius: 8px; display: flex; align-items: center; gap: 10px; font-size: 0.9em; cursor: pointer;" onclick="window.location.href='notifications.HTML'"><i class="fas fa-bell"></i> Notifications</div>
+                    <div style="padding: 12px; color: #666; border-radius: 8px; display: flex; align-items: center; gap: 10px; font-size: 0.9em; cursor: pointer;" onclick="window.location.href='preferences.HTML'"><i class="fas fa-globe"></i> Preferences</div>
+                    <div style="padding: 12px; background: var(--primary-gradient); color: white; border-radius: 8px; margin-bottom: 10px; display: flex; align-items: center; gap: 10px; font-size: 0.9em;"><i class="fas fa-shield-alt"></i> Security</div>
+                </div>
+                <div style="background: white; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.08); overflow: hidden;">
+                    <div style="padding: 20px; border-bottom: 1px solid #f0f0f0;">
+                        <h2 style="color: #333; font-size: 1.2em;">Security & Privacy</h2>
+                        <p style="color: #999; font-size: 0.85em;">Manage your account security</p>
+                    </div>
+                    <div style="padding: 20px;">
+                        <div style="display: grid; grid-template-columns: 1fr; gap: 15px;">
+                            <div class="form-group">
+                                <label>Current Password</label>
+                                <input type="password" id="currentPassword" placeholder="Enter current password" style="width: 100%; padding: 10px 14px; border: 2px solid #e0e0e0; border-radius: 8px; font-size: 0.9em;">
+                            </div>
+                            <div class="form-group">
+                                <label>New Password</label>
+                                <input type="password" id="newPassword" placeholder="Enter new password" style="width: 100%; padding: 10px 14px; border: 2px solid #e0e0e0; border-radius: 8px; font-size: 0.9em;">
+                            </div>
+                            <div class="form-group">
+                                <label>Confirm New Password</label>
+                                <input type="password" id="confirmPassword" placeholder="Confirm new password" style="width: 100%; padding: 10px 14px; border: 2px solid #e0e0e0; border-radius: 8px; font-size: 0.9em;">
+                            </div>
+                        </div>
+                        
+                        <div style="margin-top: 25px; padding-top: 20px; border-top: 1px solid #f0f0f0;">
+                            <h3 style="color: #333; font-size: 1.1em; margin-bottom: 15px;">Two-Factor Authentication</h3>
+                            <div style="display: flex; justify-content: space-between; align-items: center; padding: 15px; background: #f8f9fa; border-radius: 8px; margin-bottom: 15px;">
+                                <div>
+                                    <h4 style="color: #333; font-size: 1em; margin-bottom: 5px;">Enable 2FA</h4>
+                                    <p style="color: #666; font-size: 0.85em;">Add an extra layer of security to your account</p>
+                                </div>
+                                <label style="position: relative; display: inline-block; width: 50px; height: 26px;">
+                                    <input type="checkbox" id="twoFactor" style="opacity: 0; width: 0; height: 0;">
+                                    <span style="position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #ccc; transition: .4s; border-radius: 34px;"></span>
+                                </label>
+                            </div>
+                        </div>
+                        
+                        <div style="margin-top: 25px; padding-top: 20px; border-top: 1px solid #f0f0f0;">
+                            <h3 style="color: #333; font-size: 1.1em; margin-bottom: 15px;">Login Sessions</h3>
+                            <div style="padding: 15px; background: #f8f9fa; border-radius: 8px; margin-bottom: 10px;">
+                                <div style="display: flex; justify-content: space-between; align-items: center;">
+                                    <div>
+                                        <h4 style="color: #333; font-size: 1em; margin-bottom: 5px;">Current Session</h4>
+                                        <p style="color: #666; font-size: 0.85em;">Chrome on Windows - Last active: Just now</p>
+                                    </div>
+                                    <span style="background: #28a745; color: white; padding: 4px 10px; border-radius: 12px; font-size: 0.75em;">Active</span>
+                                </div>
+                            </div>
+                            <button style="padding: 8px 16px; background: #dc3545; color: white; border: none; border-radius: 6px; cursor: pointer; font-size: 0.85em;">Sign Out All Other Sessions</button>
+                        </div>
+                        
+                        <div style="margin-top: 20px; padding-top: 20px; border-top: 1px solid #f0f0f0; display: flex; justify-content: flex-end; gap: 10px;">
+                            <button class="btn-cancel" style="padding: 10px 20px; border: 2px solid #e0e0e0; background: white; border-radius: 8px; cursor: pointer; font-size: 0.9em;" onclick="cancelSecurity()">Cancel</button>
+                            <button class="btn-primary" onclick="saveSecurity()"><i class="fas fa-save"></i> Save Changes</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+<script>
+window.onload = function() {
+    const savedPhoto = localStorage.getItem('profilePhoto');
+    if (savedPhoto) {
+        const dashboardAvatar = document.getElementById('dashboard-avatar');
+        if (dashboardAvatar) {
+            dashboardAvatar.innerHTML = '<img src="' + savedPhoto + '" style="width: 100%; height: 100%; object-fit: cover; border-radius: 50%;">';
+        }
+    }
+    const savedSettings = localStorage.getItem('userSettings');
+    if (savedSettings) {
+        const settings = JSON.parse(savedSettings);
+        const fullName = settings.firstName + ' ' + settings.lastName;
+        const usernameEl = document.getElementById('dashboard-username');
+        if (usernameEl) usernameEl.textContent = fullName;
+    }
+    const savedSecurity = localStorage.getItem('securitySettings');
+    if (savedSecurity) {
+        const security = JSON.parse(savedSecurity);
+        document.getElementById('twoFactor').checked = security.twoFactor;
+    }
+};
+
+function saveSecurity() {
+    const currentPassword = document.getElementById('currentPassword').value;
+    const newPassword = document.getElementById('newPassword').value;
+    const confirmPassword = document.getElementById('confirmPassword').value;
+    
+    if (currentPassword && newPassword && confirmPassword) {
+        if (newPassword !== confirmPassword) {
+            alert('New passwords do not match!');
+            return;
+        }
+        if (newPassword.length < 8) {
+            alert('Password must be at least 8 characters!');
+            return;
+        }
+        alert('Password changed successfully!');
+    }
+    
+    const security = {
+        twoFactor: document.getElementById('twoFactor').checked
+    };
+    localStorage.setItem('securitySettings', JSON.stringify(security));
+    alert('Security settings saved successfully!');
+}
+
+function cancelSecurity() {
+    document.getElementById('currentPassword').value = '';
+    document.getElementById('newPassword').value = '';
+    document.getElementById('confirmPassword').value = '';
+    
+    const savedSecurity = localStorage.getItem('securitySettings');
+    if (savedSecurity) {
+        const security = JSON.parse(savedSecurity);
+        document.getElementById('twoFactor').checked = security.twoFactor;
+    }
+    alert('Changes cancelled');
+}
+</script>
+</html>

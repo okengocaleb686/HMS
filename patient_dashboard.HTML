@@ -1,0 +1,533 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Patient Dashboard - Hospital Management System</title>
+    <link rel="stylesheet" href="STYLE.CSS">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .patient-welcome {
+            background: linear-gradient(135deg, #1e3a5f 0%, #2c5282 100%);
+            color: white;
+            padding: 25px 30px;
+            border-radius: 12px;
+            margin-bottom: 25px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 4px 15px rgba(30, 60, 114, 0.3);
+        }
+        
+        .patient-welcome h2 {
+            margin: 0;
+            font-size: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .patient-welcome .patient-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .patient-avatar-large {
+            width: 55px;
+            height: 55px;
+            background: rgba(255,255,255,0.2);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            border: 2px solid rgba(255,255,255,0.3);
+        }
+        
+        .health-metrics {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+        
+        .health-metric {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            text-align: center;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+            transition: all 0.3s;
+        }
+        
+        .health-metric:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.12);
+        }
+        
+        .health-metric-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.3rem;
+            margin: 0 auto 12px;
+        }
+        
+        .health-metric-value {
+            font-size: 1.6rem;
+            font-weight: 700;
+            color: #333;
+        }
+        
+        .health-metric-label {
+            font-size: 0.85rem;
+            color: #666;
+            margin-top: 4px;
+        }
+        
+        .appointment-card {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+        
+        .appointment-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.12);
+        }
+        
+        .appointment-date {
+            min-width: 70px;
+            text-align: center;
+            padding: 12px;
+            background: var(--primary-gradient);
+            border-radius: 10px;
+            color: white;
+        }
+        
+        .appointment-date .day {
+            font-size: 1.5rem;
+            font-weight: 700;
+            line-height: 1;
+        }
+        
+        .appointment-date .month {
+            font-size: 0.8rem;
+            text-transform: uppercase;
+        }
+        
+        .appointment-details {
+            flex: 1;
+        }
+        
+        .appointment-details h4 {
+            margin: 0 0 6px 0;
+            color: #333;
+            font-size: 1rem;
+        }
+        
+        .appointment-details p {
+            margin: 0;
+            font-size: 0.85rem;
+            color: #666;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .prescription-card {
+            background: white;
+            border-radius: 12px;
+            padding: 15px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+            margin-bottom: 12px;
+            border-left: 4px solid var(--primary-dark);
+        }
+        
+        .prescription-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        
+        .prescription-header h4 {
+            margin: 0;
+            color: #333;
+            font-size: 0.95rem;
+        }
+        
+        .prescription-date {
+            font-size: 0.8rem;
+            color: #666;
+        }
+        
+        .prescription-items {
+            font-size: 0.85rem;
+            color: #666;
+        }
+        
+        .medication-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            border-bottom: 1px solid #f0f0f0;
+        }
+        
+        .medication-item:last-child {
+            border-bottom: none;
+        }
+        
+        .info-card {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+        }
+        
+        .info-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 12px 0;
+            border-bottom: 1px solid #f0f0f0;
+        }
+        
+        .info-item:last-child {
+            border-bottom: none;
+        }
+        
+        .info-label {
+            color: #666;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .info-value {
+            font-weight: 600;
+            color: #333;
+            font-size: 0.9rem;
+        }
+        
+        .alert-banner {
+            background: rgba(255, 152, 0, 0.1);
+            border: 1px solid rgba(255, 152, 0, 0.3);
+            border-radius: 10px;
+            padding: 15px 20px;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .alert-icon {
+            width: 40px;
+            height: 40px;
+            background: rgba(255, 152, 0, 0.2);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #ff9800;
+            font-size: 1.1rem;
+        }
+        
+        .alert-content h4 {
+            margin: 0 0 4px 0;
+            color: #333;
+            font-size: 0.95rem;
+        }
+        
+        .alert-content p {
+            margin: 0;
+            font-size: 0.85rem;
+            color: #666;
+        }
+    </style>
+</head>
+<body>
+    <div class="dashboard-container">
+        <div class="sidebar">
+            <div class="sidebar-header">
+                <img src="IMAGES/HMS.jpg" alt="HMS Logo">
+                <p>Hospital Management</p>
+            </div>
+            <ul class="sidebar-menu">
+                <li class="active"><a href="patient_dashboard.HTML"><i class="fas fa-tachometer-alt"></i> <span>Dashboard</span></a></li>
+                <li><a href="appointments.HTML"><i class="fas fa-calendar-check"></i> <span>Appointments</span></a></li>
+                <li><a href="medical_records.HTML"><i class="fas fa-file-medical-alt"></i> <span>Medical Records</span></a></li>
+                <li><a href="billing.HTML"><i class="fas fa-file-invoice-dollar"></i> <span>Billing</span></a></li>
+                <li><a href="prescriptions.HTML"><i class="fas fa-prescription"></i> <span>Prescriptions</span></a></li>
+                <li><a href="messages.HTML"><i class="fas fa-envelope"></i> <span>Messages</span></a></li>
+                <li><a href="settings.HTML"><i class="fas fa-cog"></i> <span>Settings</span></a></li>
+                <li><a href="LOGOUT.HTML"><i class="fas fa-sign-out-alt"></i> <span>Logout</span></a></li>
+            </ul>
+        </div>
+        <div class="main-content">
+            <!-- Patient Welcome Section -->
+            <div class="patient-welcome">
+                <div class="patient-info">
+                    <div class="patient-avatar-large"><i class="fas fa-user"></i></div>
+                    <div>
+                        <h2>Welcome Back, <span id="patientName">John Doe</span></h2>
+                        <p style="margin: 5px 0 0 0; opacity: 0.9; font-size: 0.9rem;">Patient ID: <span id="patientId">PAT-001</span> | Member since <span id="memberSince">2024</span></p>
+                    </div>
+                </div>
+                <button style="background: rgba(255,255,255,0.15); border: 1px solid rgba(255,255,255,0.3); color: white; padding: 10px 18px; border-radius: 8px; cursor: pointer; font-size: 0.85rem; font-weight: 500; display: flex; align-items: center; gap: 8px;" onclick="window.location.href='appointments.HTML'">
+                    <i class="fas fa-calendar-plus"></i> Book Appointment
+                </button>
+            </div>
+            
+            <!-- Alert Banner -->
+            <div class="alert-banner">
+                <div class="alert-icon"><i class="fas fa-bell"></i></div>
+                <div class="alert-content">
+                    <h4>Upcoming Appointment Reminder</h4>
+                    <p>You have an appointment with Dr. Smith tomorrow at 09:00 AM. Please arrive 15 minutes early.</p>
+                </div>
+            </div>
+            
+            <!-- Health Metrics -->
+            <div class="health-metrics">
+                <div class="health-metric">
+                    <div class="health-metric-icon" style="background: rgba(30,60,114,0.1); color: var(--primary-dark);">
+                        <i class="fas fa-calendar-check"></i>
+                    </div>
+                    <div class="health-metric-value">3</div>
+                    <div class="health-metric-label">Upcoming Appointments</div>
+                </div>
+                <div class="health-metric">
+                    <div class="health-metric-icon" style="background: rgba(40,167,69,0.1); color: #28a745;">
+                        <i class="fas fa-check-circle"></i>
+                    </div>
+                    <div class="health-metric-value">12</div>
+                    <div class="health-metric-label">Completed Visits</div>
+                </div>
+                <div class="health-metric">
+                    <div class="health-metric-icon" style="background: rgba(220,53,69,0.1); color: #dc3545;">
+                        <i class="fas fa-file-medical"></i>
+                    </div>
+                    <div class="health-metric-value">5</div>
+                    <div class="health-metric-label">Medical Records</div>
+                </div>
+                <div class="health-metric">
+                    <div class="health-metric-icon" style="background: rgba(255,152,0,0.1); color: #ff9800;">
+                        <i class="fas fa-prescription"></i>
+                    </div>
+                    <div class="health-metric-value">2</div>
+                    <div class="health-metric-label">Active Prescriptions</div>
+                </div>
+            </div>
+            
+            <!-- Content Grid -->
+            <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 20px;">
+                <!-- Left Column -->
+                <div>
+                    <!-- Upcoming Appointments -->
+                    <div style="background: white; border-radius: 12px; padding: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.08); margin-bottom: 20px;">
+                        <h3 style="color: var(--primary-dark); margin-bottom: 15px; display: flex; align-items: center; gap: 10px;"><i class="fas fa-calendar-alt"></i> Upcoming Appointments</h3>
+                        
+                        <div class="appointment-card">
+                            <div class="appointment-date">
+                                <div class="day">18</div>
+                                <div class="month">Feb</div>
+                            </div>
+                            <div class="appointment-details">
+                                <h4>Cardiac Checkup - Dr. John Smith</h4>
+                                <p><i class="fas fa-clock"></i> 09:00 AM <i class="fas fa-hospital"></i> Room 204, Heart Center</p>
+                            </div>
+                            <span class="status confirmed">Confirmed</span>
+                        </div>
+                        
+                        <div class="appointment-card">
+                            <div class="appointment-date">
+                                <div class="day">22</div>
+                                <div class="month">Feb</div>
+                            </div>
+                            <div class="appointment-details">
+                                <h4>Blood Test - Laboratory</h4>
+                                <p><i class="fas fa-clock"></i> 10:30 AM <i class="fas fa-hospital"></i> Lab Wing</p>
+                            </div>
+                            <span class="status pending">Pending</span>
+                        </div>
+                        
+                        <div class="appointment-card">
+                            <div class="appointment-date">
+                                <div class="day">28</div>
+                                <div class="month">Feb</div>
+                            </div>
+                            <div class="appointment-details">
+                                <h4>Follow-up Visit - Dr. Sarah Johnson</h4>
+                                <p><i class="fas fa-clock"></i> 02:00 PM <i class="fas fa-hospital"></i> Room 305, Brain Center</p>
+                            </div>
+                            <span class="status confirmed">Confirmed</span>
+                        </div>
+                    </div>
+                    
+                    <!-- Recent Prescriptions -->
+                    <div style="background: white; border-radius: 12px; padding: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.08);">
+                        <h3 style="color: var(--primary-dark); margin-bottom: 15px; display: flex; align-items: center; gap: 10px;"><i class="fas fa-prescription"></i> Recent Prescriptions</h3>
+                        
+                        <div class="prescription-card">
+                            <div class="prescription-header">
+                                <h4>Prescription #RX-2026-0142</h4>
+                                <span class="prescription-date">Feb 14, 2026</span>
+                            </div>
+                            <div class="prescription-items">
+                                <div class="medication-item">
+                                    <span>Metoprolol 50mg</span>
+                                    <span style="font-weight: 600;">1 tablet daily</span>
+                                </div>
+                                <div class="medication-item">
+                                    <span>Aspirin 81mg</span>
+                                    <span style="font-weight: 600;">1 tablet daily</span>
+                                </div>
+                                <div class="medication-item">
+                                    <span>Atorvastatin 20mg</span>
+                                    <span style="font-weight: 600;">1 tablet at night</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="prescription-card">
+                            <div class="prescription-header">
+                                <h4>Prescription #RX-2026-0098</h4>
+                                <span class="prescription-date">Jan 28, 2026</span>
+                            </div>
+                            <div class="prescription-items">
+                                <div class="medication-item">
+                                    <span>Vitamin D3 1000IU</span>
+                                    <span style="font-weight: 600;">1 tablet daily</span>
+                                </div>
+                                <div class="medication-item">
+                                    <span>Multivitamin</span>
+                                    <span style="font-weight: 600;">1 tablet daily</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Right Column -->
+                <div>
+                    <!-- Patient Information -->
+                    <div class="info-card" style="margin-bottom: 20px;">
+                        <h3 style="color: var(--primary-dark); margin-bottom: 15px; display: flex; align-items: center; gap: 10px;"><i class="fas fa-user-circle"></i> My Information</h3>
+                        
+                        <div class="info-item">
+                            <span class="info-label"><i class="fas fa-id-card"></i> Patient ID</span>
+                            <span class="info-value">PAT-001</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label"><i class="fas fa-birthday-cake"></i> Date of Birth</span>
+                            <span class="info-value">Jan 15, 1985</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label"><i class="fas fa-venus-mars"></i> Gender</span>
+                            <span class="info-value">Male</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label"><i class="fas fa-phone"></i> Phone</span>
+                            <span class="info-value">+1 234-567-8900</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label"><i class="fas fa-envelope"></i> Email</span>
+                            <span class="info-value">john.doe@email.com</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label"><i class="fas fa-tint"></i> Blood Type</span>
+                            <span class="info-value">A+</span>
+                        </div>
+                    </div>
+                    
+                    <!-- Primary Doctor -->
+                    <div class="info-card">
+                        <h3 style="color: var(--primary-dark); margin-bottom: 15px; display: flex; align-items: center; gap: 10px;"><i class="fas fa-user-md"></i> Primary Doctor</h3>
+                        
+                        <div style="display: flex; align-items: center; gap: 15px; padding: 15px; background: #f8f9fa; border-radius: 10px;">
+                            <div style="width: 50px; height: 50px; background: var(--primary-gradient); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-weight: 600;">JS</div>
+                            <div>
+                                <h4 style="margin: 0 0 4px 0; color: #333;">Dr. John Smith</h4>
+                                <p style="margin: 0; font-size: 0.85rem; color: #666;">Cardiology Specialist</p>
+                            </div>
+                        </div>
+                        
+                        <button style="width: 100%; margin-top: 15px; padding: 10px; background: var(--primary-gradient); border: none; border-radius: 8px; color: white; font-weight: 600; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px;">
+                            <i class="fas fa-calendar"></i> Schedule Visit
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+<script>
+// Check if logged in
+if (localStorage.getItem('isLoggedIn') !== 'true') {
+    window.location.href = 'LOGIN.HTML';
+}
+
+// Check user role - only allow patient
+const userRole = localStorage.getItem('userRole');
+if (userRole !== 'patient') {
+    // Redirect to appropriate dashboard based on role
+    if (userRole === 'admin' || userRole === 'doctor') {
+        window.location.href = 'DASHBOARD.HTML';
+    } else if (userRole === 'nurse') {
+        window.location.href = 'nurse_dashboard.HTML';
+    } else {
+        window.location.href = 'LOGIN.HTML';
+    }
+}
+window.onload = function() {
+    // Load saved profile photo
+    const savedPhoto = localStorage.getItem('profilePhoto');
+    if (savedPhoto) {
+        const dashboardAvatar = document.getElementById('dashboard-avatar');
+        if (dashboardAvatar) {
+            dashboardAvatar.innerHTML = '<img src="' + savedPhoto + '" style="width: 100%; height: 100%; object-fit: cover; border-radius: 50%;">';
+        }
+    }
+    
+    // Load saved username
+    const savedSettings = localStorage.getItem('userSettings');
+    if (savedSettings) {
+        const settings = JSON.parse(savedSettings);
+        const fullName = settings.firstName + ' ' + settings.lastName;
+        const usernameEl = document.getElementById('dashboard-username');
+        if (usernameEl) {
+            usernameEl.textContent = fullName;
+        }
+        
+        // Update patient details in header
+        const patientNameEl = document.getElementById('patientName');
+        if (patientNameEl) {
+            patientNameEl.textContent = fullName;
+        }
+    }
+    
+    // Load patient ID from localStorage
+    const userRole = localStorage.getItem('userRole');
+    const userEmail = localStorage.getItem('userEmail');
+    if (userRole === 'patient') {
+        // Generate patient ID from email
+        const patientIdEl = document.getElementById('patientId');
+        if (patientIdEl && userEmail) {
+            patientIdEl.textContent = 'PAT-' + userEmail.substring(0, 3).toUpperCase();
+        }
+    }
+};
+</script>
+</html>
